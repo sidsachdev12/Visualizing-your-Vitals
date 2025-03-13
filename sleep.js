@@ -1,122 +1,220 @@
-// Sample data
-const data = [
-  { category: "A", group1: 30, group2: 20, group3: 10 },
-  { category: "B", group1: 40, group2: 10, group3: 20 },
-  { category: "C", group1: 10, group2: 30, group3: 30 },
-];
+class sleepAreaChart {
+  constructor(parentElement, data) {
+    this.parentElement = parentElement;
+    this.data = data;
 
-// Dimensions and margins
-const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-const width = 600 - margin.left - margin.right;
-const height = 400 - margin.top - margin.bottom;
+    // Define the date range
+    this.startDate = parseDate("2023-1-02");
+    this.endDate = parseDate("2023-1-08");
 
-// Create SVG container
-const svg = d3
-  .select("#chart")
-  .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-  .attr("transform", `translate(${margin.left},${margin.top})`);
+    // Filter the data based on the date range
+    this.filteredData = this.data.filter((d) => {
+      return d.date >= this.startDate && d.date <= this.endDate;
+    });
 
-// X scale (categories)
-const x = d3
-  .scaleBand()
-  .domain(data.map((d) => d.category))
-  .range([0, width])
-  .padding(0.2);
+    this.formatDate = d3.timeFormat("%b %d, %y");
+    this.parseDate = d3.timeParse("%Y-%m-%d");
 
-// Y scale (values)
-const y = d3
-  .scaleLinear()
-  .domain([0, 60]) // Adjust domain to include negative values
-  .range([height, 0]);
+    this.initViz();
+  }
 
-// Color scale (groups)
-const color = d3
-  .scaleOrdinal()
-  .domain(["group1", "group2", "group3"])
-  .range(["#1f77b4", "#ff7f0e", "#2ca02c"]);
+  // 1. Initialize the visualization
+  initViz() {
+    let viz = this;
 
-// Stack the data
-const stack = d3.stack().keys(["group1", "group2", "group3"]);
+    viz.margin = { top: 20, right: 100, bottom: 40, left: 50 };
+    viz.width =
+      document.getElementById(viz.parentElement).getBoundingClientRect().width -
+      viz.margin.left -
+      viz.margin.right;
+    viz.height =
+      document.getElementById(viz.parentElement).getBoundingClientRect()
+        .height -
+      viz.margin.top -
+      viz.margin.bottom;
+    // Create SVG container
+    viz.svg = d3
+      .select("#chart")
+      .append("svg")
+      .attr("width", viz.width + viz.margin.left + viz.margin.right)
+      .attr("height", viz.height + viz.margin.top + viz.margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${viz.margin.left},${viz.margin.top})`);
 
-let stackedData = stack(data);
+    // X scale (days of the week)
+    viz.x = d3
+      .scaleBand()
+      .domain(viz.filteredData.map((d) => d.date))
+      .range([0, viz.width])
+      .padding(0.2);
 
-// Draw bars
-const bars = svg
-  .selectAll(".category")
-  .data(stackedData)
-  .enter()
-  .append("g")
-  .attr("fill", (d) => color(d.key)) // Color based on the group key
-  .selectAll("rect")
-  .data((d) => {
-    // Add the group key to each data point
-    return d.map((point) => ({ ...point, key: d.key }));
-  })
-  .enter()
-  .append("rect")
-  .attr("class", "bar")
-  .attr("x", (d) => x(d.data.category))
-  .attr("y", (d) => y(d[1]))
-  .attr("height", (d) => y(d[0]) - y(d[1]))
-  .attr("width", x.bandwidth());
+    // Y scale (total sleep duration in hours)
+    viz.y = d3.scaleLinear().domain([0, 12]).range([viz.height, 0]);
 
-// Add X axis
-svg
-  .append("g")
-  .attr("transform", `translate(0,${height})`)
-  .call(d3.axisBottom(x));
+    // Color scale for sleep phases
+    viz.color = d3
+      .scaleOrdinal()
+      .domain(["deep", "core", "rem", "awake"])
+      .range(["#1f77b4", "#ff7f0e", "#ff8292", "#2ca02c"]);
 
-// Add Y axis
-svg.append("g").call(d3.axisLeft(y));
+    // Add X axis
+    viz.svg
+      .append("g")
+      .attr("class", "x-axis")
+      .attr("transform", `translate(0,${viz.height})`)
+      .call(d3.axisBottom(viz.x).tickFormat(viz.formatDate));
 
-// Create legend
-const legend = d3
-  .select("#legend")
-  .selectAll("div")
-  .data(color.domain())
-  .enter()
-  .append("div")
-  .attr("class", "legend")
-  .style("color", (d) => color(d))
-  .text((d) => d)
-  .on("click", function (event, selectedGroup) {
-    // Find the index of the selected group
-    const selectedIndex = color.domain().indexOf(selectedGroup);
+    // Add Y axis
+    viz.svg.append("g").attr("class", "y-axis").call(d3.axisLeft(viz.y));
 
-    // Update the y-position and height of each bar
-    bars
-      .transition()
-      .duration(500)
-      .attr("y", (d) => {
-        const groupIndex = color.domain().indexOf(d.key);
-        if (groupIndex < selectedIndex) {
-          // Move groups below the selected group below the x-axis
-          return y(d[1] - 60); // Adjust offset as needed
-        } else if (groupIndex === selectedIndex) {
-          // Place the selected group on the x-axis
-          return y(0) - (y(d[0]) - y(d[1])); // Adjust y-position to snap to x-axis
-        } else {
-          // Keep groups above the selected group in their original positions
-          return y(d[1]);
-        }
-      })
-      .attr("height", (d) => {
-        const groupIndex = color.domain().indexOf(d.key);
-        if (groupIndex < selectedIndex) {
-          // Adjust height for groups below the selected group
-          return y(d[0] - 60) - y(d[1] - 60);
-        } else if (groupIndex === selectedIndex) {
-          // Keep the height of the selected group the same
-          return y(d[0]) - y(d[1]);
-        } else {
-          // Keep the height for groups above the selected group
-          return y(d[0]) - y(d[1]);
-        }
+    viz.leftArrow = d3.select("#left-arrow").on("click", () => {
+      viz.updateDates(false);
+    });
+
+    viz.rightArrow = d3.select("#right-arrow").on("click", () => {
+      viz.updateDates(true);
+    });
+
+    viz.wrangleData();
+  }
+
+  // 2. Process the data
+  wrangleData() {
+    const viz = this;
+
+    // Filter the data based on the date range
+    viz.filteredData = viz.data.filter((d) => {
+      return d.date >= viz.startDate && d.date <= viz.endDate;
+    });
+
+    console.log(this.filteredData);
+
+    // Stack the data by sleep phases
+    viz.stack = d3.stack().keys(["deep", "core", "rem", "awake"]);
+    viz.stackedData = viz.stack(viz.filteredData);
+
+    // Add the key property to each data point
+    viz.stackedData.forEach((layer) => {
+      layer.forEach((d) => {
+        d.key = layer.key; // Add the key property
       });
-  });
+    });
 
-// Initial highlight (optional)
-d3.select(".legend").dispatch("click");
+    viz.updateViz();
+  }
+
+  // 3. Draw and update the visualization
+  updateViz() {
+    let viz = this;
+    // Update scales
+    viz.x.domain(viz.filteredData.map((d) => d.date)); // Days of the week
+    viz.y.domain([0, 12]); // Total sleep duration
+
+    // Update the x-axis
+    viz.svg
+      .select(".x-axis") // Select the existing x-axis group
+      .call(d3.axisBottom(viz.x).tickFormat(viz.formatDate)); // Re-render the x-axis
+
+    console.log(viz.startDate);
+
+    if (viz.startDate <= parseDate("2023-1-02")) {
+      viz.leftArrow.style("visibility", "hidden");
+    } else {
+      viz.leftArrow.style("visibility", "visible");
+    }
+
+    if (viz.endDate >= parseDate("2024-05-14")) {
+      viz.rightArrow.style("visibility", "hidden");
+    } else {
+      viz.rightArrow.style("visibility", "visible");
+    }
+
+    // Bind the updated data to the bars
+    viz.bars = viz.svg.selectAll(".bar").data(viz.stackedData.flat());
+
+    // Remove old bars
+    viz.bars.exit().remove();
+
+    // Update existing bars
+    viz.bars
+      .attr("x", (d) => viz.x(d.data.date))
+      .attr("y", (d) => viz.y(d[1]))
+      .attr("height", (d) => viz.y(d[0]) - viz.y(d[1]))
+      .attr("width", viz.x.bandwidth())
+      .attr("fill", (d) => viz.color(d.key)); // Use the key property for color
+
+    // Add new bars
+    viz.bars
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", (d) => viz.x(d.data.date))
+      .attr("y", (d) => viz.y(d[1]))
+      .attr("height", (d) => viz.y(d[0]) - viz.y(d[1]))
+      .attr("width", viz.x.bandwidth())
+      .attr("fill", (d) => viz.color(d.key)); // Use the key property for color
+
+    // Create legend
+    viz.legend = d3
+      .select("#legend")
+      .selectAll("div")
+      .data(viz.color.domain())
+      .enter()
+      .append("div")
+      .attr("class", "legend")
+      .style("color", (d) => viz.color(d)) // Set text color
+      .html(
+        (d) => `<span style="background-color:${viz.color(d)}"></span> ${d}`
+      ) // Add color box
+      .on("click", function (event, selectedGroup) {
+        // Find the index of the selected group
+        const selectedIndex = viz.color.domain().indexOf(selectedGroup);
+
+        // Update the y-position and height of each bar
+        viz.bars
+          .transition()
+          .duration(500)
+          .attr("y", (d) => {
+            let height = viz.y(d[0]) - viz.y(d[1]);
+            let groupIndex = viz.color.domain().indexOf(d.key);
+            if (groupIndex < selectedIndex) {
+              // Move groups below the selected group below the x-axis
+              return viz.y(d[1] - 60); // Adjust offset as needed
+            } else if (groupIndex === selectedIndex) {
+              // Place the selected group on the x-axis
+              return viz.y(0) - height; // Adjust y-position to snap to x-axis
+            } else {
+              // Keep groups above the selected group in their original positions
+              return viz.y(d[1]);
+            }
+          })
+          .attr("height", (d) => {
+            let groupIndex = viz.color.domain().indexOf(d.key);
+            if (groupIndex < selectedIndex) {
+              // Adjust height for groups below the selected group
+              return viz.y(d[0] - 60) - viz.y(d[1] - 60);
+            } else {
+              // Keep the height of the selected group the same
+              return viz.y(d[0]) - viz.y(d[1]);
+            }
+          });
+      });
+
+    // Initial highlight (optional)
+    d3.select(".legend").dispatch("click");
+  }
+
+  updateDates(future) {
+    let viz = this;
+
+    if (future) {
+      viz.startDate = d3.timeDay.offset(viz.startDate, 7);
+      viz.endDate = d3.timeDay.offset(viz.endDate, 7);
+    } else {
+      viz.startDate = d3.timeDay.offset(viz.startDate, -7);
+      viz.endDate = d3.timeDay.offset(viz.endDate, -7);
+    }
+
+    viz.wrangleData();
+  }
+}
