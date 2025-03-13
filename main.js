@@ -13,7 +13,7 @@ let parseDate = d3.timeParse("%Y-%m-%d");
 let formatDate = d3.timeFormat("%Y-%m-%d");
 
 async function loadSleepData() {
-  return d3.csv("dataset/sleep_data.csv", (row) => {
+  return d3.csv("data/sleep_data.csv", (row) => {
     row.date = parseDate(row.date);
     row.total_sleep = +row.total_sleep / 60;
     row.awake = +row.awake / 60;
