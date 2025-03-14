@@ -1,0 +1,14 @@
+.line {
+    fill: none;
+    stroke-width: 2;
+}
+#lineChart {
+    width: 100%;
+    height: 600px;
+}
+.dot {
+    fill: black;
+}
+.annotation {
+    font-size: 12px;
+}
