@@ -44,7 +44,7 @@ class ScatterPlot {
           .attr("x", vis.width / 2)
           .attr("y", vis.height + 35)
           .attr("text-anchor", "middle")
-          .text("Age");
+          .text("AGE");
 
       vis.svg.append("text")
           .attr("class", "y-axis-label")
