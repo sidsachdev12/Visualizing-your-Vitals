@@ -100,7 +100,8 @@ class LineChart {
       .transition()
       .duration(1000)
       .attr("d", vis.lineGenerator)
-      .attr("stroke", "blue");
+      .attr("stroke", "blue")
+      .attr("fill", "none");  // add this line to remove the fill
 
     // add circles for each data point
     const circles = vis.svg.selectAll(".dot")
