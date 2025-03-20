@@ -1,0 +1,49 @@
+/* Basic reset (optional) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Full-page split layout container */
+.split-container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden; /* Ensures no scrollbar when columns shift */
+}
+
+/* Shared split section styles */
+.split {
+  flex: 1 1 50%; /* Default each side is 50% width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: flex 0.5s ease; /* Smoothly adjust width on hover */
+  cursor: pointer; /* Make it feel clickable */
+  color: #fff; /* White text for contrast */
+  font-family: sans-serif;
+  font-size: 2rem;
+  text-align: center;
+}
+
+/* Left half: red/orange background */
+.left {
+  background-color: #e94b35;
+}
+
+/* Right half: purple background */
+.right {
+  background-color: #8e44ad;
+}
+
+/* On hover, reduce all splits to 30% */
+.split-container:hover .split {
+  flex: 1 1 30%;
+}
+
+/* The hovered side grows to 70% and pops out */
+.split-container:hover .split:hover {
+  flex: 1 1 70%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Subtle popout shadow */
+  z-index: 1; /* Ensure hovered side is on top if needed */
+}
