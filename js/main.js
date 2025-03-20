@@ -38,5 +38,14 @@ d3.csv("data/ai_healthcare_dataset.csv").then(data => {
     data: data,
     variable: 'Heart_Rate' // or a different variable if needed
   });
+
+  // Listen for input changes
+  document.getElementById('numInput').addEventListener('input', function () {
+    // Get the current value from the input (make sure to convert it to a number)
+    const userValue = +this.value;
+
+    // Call the updateLine method to draw/update the line at the user-defined position
+    scatterPlot.updateLine(userValue);
+  });
 }
 );
