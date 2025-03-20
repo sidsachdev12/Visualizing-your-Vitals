@@ -3,39 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stacked Bar Chart with Comparison</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="styles.css" />
+    <title>Health Tracker Homepage</title>
+    <link rel="stylesheet" href="index.css" />
+    <!-- Optionally include a custom font -->
+    <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet"> -->
   </head>
   <body>
-    <div id="sleepAreaChart">
-      <div id="legend"></div>
-      <div id="chart-container">
-        <button id="left-arrow">&larr;</button>
-        <!-- Left arrow -->
-        <div id="chart"></div>
-        <!-- Chart container -->
-        <button id="right-arrow">&rarr;</button>
-        <!-- Right arrow -->
+    <div class="split-container">
+      <div class="split left">
+        <h1>Visualize Your Vitals</h1>
+      </div>
+      <div class="split right">
+        <h1>Visualize General Health Trends</h1>
       </div>
     </div>
-
-    <!-- <script src="stackedBarChart.js"></script> -->
-
-    <!-- d3 -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <script src="https://d3js.org/topojson.v2.min.js"></script>
-    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
-
-    <!-- OWN JS -->
-    <script src="sleep.js"></script>
-    <script src="main.js"></script>
   </body>
 </html>
