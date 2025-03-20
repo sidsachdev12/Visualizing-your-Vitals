@@ -7,19 +7,19 @@
 // const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
 // function HeartRateScatterContainer() {
-//   const [data, setData] = useState(null);
+// const [data, setData] = useState(null);
 
-//   useEffect(() => {
-//     // Load the CSV file. The CSV should be placed in the public/data folder.
-//     d3.csv("/data/heart_rate_data.csv", function (row) {
-//       // Parse the timestamp and convert heart_rate to a number.
-//       row.timestamp = parseTime(row.timestamp);
-//       row.heart_rate = +row.heart_rate;
-//       return row;
-//     }).then((csvData) => {
-//       setData(csvData);
-//     });
-//   }, []);
+// useEffect(() => {
+//   // Load the CSV file. The CSV should be placed in the public/data folder.
+//   d3.csv("/data/heart_rate_data.csv", function (row) {
+//     // Parse the timestamp and convert heart_rate to a number.
+//     row.timestamp = parseTime(row.timestamp);
+//     row.heart_rate = +row.heart_rate;
+//     return row;
+//   }).then((csvData) => {
+//     setData(csvData);
+//   });
+// }, []);
 
 //   if (!data) return <div>Loading...</div>;
 //   return <HeartRateScatter data={data} />;
@@ -28,13 +28,32 @@
 // export default HeartRateScatterContainer;
 // src/HeartRateDashboard.js
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import * as d3 from "d3";
+
 import DailyHeartRateRange from "./DailyHeartRange";
 import HeartRateScatter from "./HeartRateScatter";
 
-function HeartRateDashboard({ data }) {
+// Define a parser for the timestamp using d3.timeParse
+const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
+
+function HeartRateDashboard() {
   const [mode, setMode] = useState("daily"); // "daily" or "hourly"
   const [selectedDay, setSelectedDay] = useState(null);
+
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Load the CSV file. The CSV should be placed in the public/data folder.
+    d3.csv("/data/heart_rate_data.csv", function (row) {
+      // Parse the timestamp and convert heart_rate to a number.
+      row.timestamp = parseTime(row.timestamp);
+      row.heart_rate = +row.heart_rate;
+      return row;
+    }).then((csvData) => {
+      setData(csvData);
+    });
+  }, []);
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
