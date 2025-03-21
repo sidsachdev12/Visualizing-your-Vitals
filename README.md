@@ -18,6 +18,7 @@ It shold automatically download npm 10.2.3 and node 10.2.3
 
 ## 2. Run the dev server
 cd into /my-health-app
+npm install
 npm start
 
 If you run into any issues, please contact our through our email addresses!
