@@ -1,4 +1,4 @@
-// line chart
+// vis 1
 d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
   data.forEach((d) => {
     d.month = +d.month;
@@ -20,7 +20,7 @@ d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
   });
 });
 
-// line chart 2
+// vis 2
 d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
   data.forEach((d) => {
     d.Age = +d.Age;
@@ -44,5 +44,15 @@ d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
 
     // Call the updateLine method to draw/update the line at the user-defined position
     scatterPlot.updateLine(userValue);
+  });
+});
+
+// vis 3 – Using resting heart rate instead of entropy_heart
+d3.csv("./data/sleep_lifestyle_dataset.csv").then(data => {
+  const heatMap = new HeatMap({
+    parentElement: "#heatMap", // Ensure an HTML element with id "heatMap" exists
+    data: data,
+    width: 800,
+    height: 500
   });
 });

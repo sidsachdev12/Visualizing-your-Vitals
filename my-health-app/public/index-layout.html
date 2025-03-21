@@ -21,9 +21,8 @@
     <div class="container">
         <div class="row border">
             <div class="jumbotron border" style="background-color: rgb(126, 0, 0);">
-                <h1 style="color: rgb(255, 255, 255);">Your stress is killing you!</h1>
-                <p style="color: rgb(255, 255, 255);">Discover how stress level ruins your sleep quality which RUINS
-                    YOUR LIFE!!!</p>
+                <h1 style="color: rgb(255, 255, 255);">Your stress is KILLING you!</h1>
+                <p style="color: rgb(255, 255, 255);">Discover how stress levels </p>
             </div>
             <div class="col-md-6 p-5">
                 <img src="styles/assets/stress.png" alt="sleep img" class="img-fluid" />
@@ -42,7 +41,30 @@
                         <label for="numInput">These are the average heart rates of those at age (20-80):</label>
                         <input type="number" id="numInput" name="numInput" min="20" max="80">
                         <div id="scatterPlot"></div>
+                        <p>A high heart rate is associated with an increased risk of serious health problems, such as
+                            heart attack, anyuerusms, heart failure, and kidney problems. Check to see if your age falls
+                            within your age group's averages.</p>
+                        <a
+                            href="https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/symptoms-causes/syc-20373410">Source</a>
                     </div>
+                </div>
+
+                <div id="vis-9" class="row border p-5">
+                    <h3>STRESS OVER TIME (VIS 9)</h3>
+                    <p>These are your cortisol levels over time depending on activity.</p>
+                    <p>INSIGHTS: As stress increases, so does your resting heart rate, which can lead to difficult
+                        medicial complications. Frequent rest and meditation will help reduce overall cortisol levels as
+                        shown below.
+                    </p>
+                    <div id="lineChart"></div>
+                    <p>High cortisol can result in issues such as elevation of blood pressure, insulin resistance, and
+                        hyperglycemia. Managing this stress hormon's level is crucial to your health.</p>
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1993964/">Source</a>
+                </div>
+
+                <div id="vis-3" class="row border p-5">
+                    <h3>Blood Pressure given BMI</h3>
+                    <div id="heatMap"></div>
                 </div>
 
                 <div id="vis-15" class="row border p-5">
@@ -51,24 +73,6 @@
                     <div>
                         <div id="">GRAPH</div>
                     </div>
-                </div>
-
-                <div id="vis-3" class="row border p-5">
-                    <h3>HEALTH RISKS DEPENDING ON YOUR BMI (VIS 3 GOES HERE)</h3>
-                </div>
-                <div id="vis-7" class="row border p-5">
-                    <h3>SLEEP QUALITY THROUGH THE WEEK (VIS 7 GOES HERE DRAFT BELOW)</h3>
-                    <img src="data/draftviz/viz-7.png" alt="Vis 7 Draft">
-                    <p>This image sets up the idea of trends through the week. We want to see sleep quality through the
-                        week
-                        and allow the viewer to correlate these sleep levels with their practices like work or exercise.
-                    </p>
-                </div>
-                <div id="vis-9" class="row border p-5">
-                    <h3>STRESS OVER TIME (VIS 9)</h3>
-                    <p>These are your cortisol levels over time depending on activity.</p>
-                    <p>INSIGHTS: Frequent rest and meditation will help reduce overall cortisol levels</p>
-                    <div id="lineChart"></div>
                 </div>
             </div>
         </div>
@@ -105,9 +109,10 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
 
-    <script src="js/main.js"></script>
     <script src="js/LineChart.js"></script>
     <script src="js/ScatterPlot.js"></script>
+    <script src="js/HeatMap.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
