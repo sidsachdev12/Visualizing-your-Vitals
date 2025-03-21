@@ -1,0 +1,107 @@
+/* VitalsPage.css */
+
+/* Container for the entire page */
+.vitals-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Top row: red + blue halves, each 50% height */
+.top-row {
+  display: flex;
+  flex: 0 0 50%;
+}
+
+.left-col {
+  flex: 1;
+  background-color: #e94b35; /* Red-ish color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 2rem;
+  font-family: sans-serif;
+}
+
+.right-col {
+  flex: 1;
+  background-color: #1ec1ea; /* Blue-ish color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+  font-size: 2rem;
+  font-family: sans-serif;
+}
+
+/* Bottom section: white area below */
+.bottom-section {
+  flex: 1;
+  background-color: #fff;
+}
+
+/* Heart container (centers icon and text) */
+.heart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem; /* Space between heart icon and text */
+}
+
+/* The SVG heart icon */
+.heart-icon {
+  width: 80px; /* Adjust as needed */
+  height: 80px;
+  fill: #fff; /* White color for the heart (since background is red) */
+  cursor: pointer;
+  animation: beat 0.7s infinite;
+}
+
+/* Instead of .heart-icon:hover, use .heart-container:hover .heart-icon
+.left-col:hover .heart-icon {
+  animation: beat 0.7s infinite;
+} */
+
+/* Existing sleep-container and sleep-icon styles */
+.sleep-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sleep-icon {
+  font-size: 60px; /* Adjust as needed */
+  animation: float 2s infinite ease-in-out;
+}
+
+/* Define keyframes for a floating effect */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px); /* Move up by 15px */
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Keyframes for a 'beating' effect */
+@keyframes beat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  40% {
+    transform: scale(0.95);
+  }
+  60% {
+    transform: scale(1.1);
+  }
+}

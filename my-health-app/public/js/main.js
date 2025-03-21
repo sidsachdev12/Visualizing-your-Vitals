@@ -1,6 +1,6 @@
 // line chart
-d3.csv("data/cortisol_trend_dataset.csv").then(data => {
-  data.forEach(d => {
+d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
+  data.forEach((d) => {
     d.month = +d.month;
     d.cortisol = +d.cortisol;
   });
@@ -11,41 +11,38 @@ d3.csv("data/cortisol_trend_dataset.csv").then(data => {
   ];
 
   const lineChart = new LineChart({
-    parentElement: '#lineChart',
+    parentElement: "#lineChart",
     width: 800,
     height: 400,
 
     data: data,
-    annotations: annotations
+    annotations: annotations,
   });
-}
-);
+});
 
 // line chart 2
-d3.csv("data/ai_healthcare_dataset.csv").then(data => {
-  data.forEach(d => {
+d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
+  data.forEach((d) => {
     d.Age = +d.Age;
     d.Heart_Rate = +d.Heart_Rate;
   });
 
-  const annotations = [
-  ];
+  const annotations = [];
 
   const scatterPlot = new ScatterPlot({
-    parentElement: '#scatterPlot',
+    parentElement: "#scatterPlot",
     width: 800,
     height: 400,
     data: data,
-    variable: 'Heart_Rate' // or a different variable if needed
+    variable: "Heart_Rate", // or a different variable if needed
   });
 
   // Listen for input changes
-  document.getElementById('numInput').addEventListener('input', function () {
+  document.getElementById("numInput").addEventListener("input", function () {
     // Get the current value from the input (make sure to convert it to a number)
     const userValue = +this.value;
 
     // Call the updateLine method to draw/update the line at the user-defined position
     scatterPlot.updateLine(userValue);
   });
-}
-);
+});
