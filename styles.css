@@ -72,14 +72,6 @@
   background-color: #ddd; /* Darker gray on hover */
 }
 
-/* #left-arrow {
-  margin-left: 40px;
-}
-
-#right-arrow {
-  margin-right: 40px;
-} */
-
 #chart {
   flex-grow: 1; /* Allow the chart to take up remaining space */
   margin: 0 10px; /* Space between chart and buttons */
