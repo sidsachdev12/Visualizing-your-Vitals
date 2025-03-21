@@ -8,9 +8,9 @@ import { ReactComponent as HeartIcon } from "../assets/heart.svg";
 
 const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
-function HeartRateScatter({ data }) {
+function HeartRateScatter({ data, selectedHour, onBack }) {
   const containerRef = useRef(null);
-  const [currentHour, setCurrentHour] = useState(11);
+  const [currentHour, setCurrentHour] = useState(selectedHour);
   const currentDay = new Date(2023, 0, 1); // January 1, 2023
   const [avgHeartBeat, setAvgHeartBeat] = useState(60);
 
@@ -36,9 +36,9 @@ function HeartRateScatter({ data }) {
     // Filter data: same day and hour equal to currentHour.
     const filteredData = data.filter(
       (d) =>
-        d.timestamp.getFullYear() === currentDay.getFullYear() &&
-        d.timestamp.getMonth() === currentDay.getMonth() &&
-        d.timestamp.getDate() === currentDay.getDate() &&
+        // d.timestamp.getFullYear() === currentDay.getFullYear() &&
+        // d.timestamp.getMonth() === currentDay.getMonth() &&
+        // d.timestamp.getDate() === currentDay.getDate() &&
         d.timestamp.getHours() === currentHour
     );
 
@@ -132,6 +132,7 @@ function HeartRateScatter({ data }) {
           }}
         />
       </div>
+      <button onClick={onBack}>Go Back to Daily Heart Ranges</button>
     </div>
   );
 }
