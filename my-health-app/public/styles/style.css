@@ -12,3 +12,8 @@
 .annotation {
     font-size: 12px;
 }
+
+img {
+    max-width: auto;
+    height: auto;
+}

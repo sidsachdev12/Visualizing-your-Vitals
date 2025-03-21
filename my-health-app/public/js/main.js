@@ -6,8 +6,8 @@ d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
   });
 
   const annotations = [
-    { month: -24, cortisol: 24, label: "Exercising" },
-    { month: -12, cortisol: 14, label: "Meditation" },
+    // { month: -24, cortisol: 24, label: "Exercising" },
+    // { month: -12, cortisol: 14, label: "Meditation" }
   ];
 
   const lineChart = new LineChart({
