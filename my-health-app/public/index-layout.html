@@ -35,7 +35,7 @@
         <div class="row border">
             <h2>Insights - How Stress and Sleep Affect your Health</h2>
             <div class="col-12">
-                <div id="vis-15" class="row border p-5">
+                <div id="vis-new" class="row border p-5">
                     <h3>THE HEALTH OF YOUR PEERS</h3>
                     <div>
                         <label for="numInput">These are the average heart rates of those at age (20-80):</label>
@@ -50,7 +50,7 @@
                 </div>
 
                 <div id="vis-9" class="row border p-5">
-                    <h3>STRESS OVER TIME (VIS 9)</h3>
+                    <h3>STRESS OVER TIME</h3>
                     <p>These are your cortisol levels over time depending on activity.</p>
                     <p>INSIGHTS: As stress increases, so does your resting heart rate, which can lead to difficult
                         medicial complications. Frequent rest and meditation will help reduce overall cortisol levels as
@@ -67,33 +67,58 @@
                     <div id="heatMap"></div>
                 </div>
 
-                <div id="vis-15" class="row border p-5">
-                    <h3>THE CONSEQUENCES ON YOUR HEART (VIS 15 GOES HERE)</h3>
-                    <img src="data/draftviz/viz-15.png" alt="Vis 15 Draft">
-                    <div>
-                        <div id="">GRAPH</div>
-                    </div>
+                <div id="vis-14" class="row border p-5">
+                    <h3>Resting Heart Rate Given Height and Weight</h3>
+                    <p>This is resting heart rate data given height and weight. See what point you belong to and if your heart rate matches!</p>
+                    <p>INSIGHTS: Looks like below the BMI 22 line we have no red resting heart rates (nothing too high). Lots
+                        of variance it seems in the higher and lower BMIs and seems a bit unpredictable, can probably be attributed to other factors
+                        such as age or occupation.
+                    </p>
+                    <div id="scatter-plot-w"></div>
+<!--                    <p>Having a healthy BMI is very important to maintain safe resting heart rate levels.</p>-->
+<!--                    <a href="">Source</a>-->
+
                 </div>
             </div>
-        </div>
-        <div class="row border">
-            <div class="alert alert-warning">MAIN MESSAGE GOES HERE (short and concise)</div>
         </div>
 
         <div class="row border">
-            <h2>Solutions Section</h2>
+            <div class="jumbotron border pt-2 pb-2" style="background-color: rgb(126, 0, 0);">
+                <h2 style="color: rgb(255, 255, 255);">What's the Point?</h2>
+                <h4 style="color: rgb(255, 255, 255);">Managing stress levels and having a healthy BMI is very important for your health.
+                    They're not independent from each other and both contribute to your Blood Pressure and Heart Rate Levels.
+                    Stress doesn't just ruin your sleep but your health, and fixing this will go a long way!
+                </h4>
+            </div>
+        </div>
+
+        <div class="row border">
+            <h2>Solutions</h2>
             <div class="col-6">
                 <div class="row border">
-                    <div class="alert alert-success p-5">Solution 1 (related to physical activity)</div>
-                    <div class="row border p-5">Supporting vis related to physical actviity vs sleep quality/stress with
-                        possible filtering based on occupation</div>
-                    <div class="row border p-5">IMG for physical activity</div>
+                    <div class="alert alert-success p-5">
+                        <h4>Solution 1: Physical Activity</h4>
+                        <p>Turns out its the same things that reduce stress which also keep you in shape!</p>
+                    </div>
+
+<!--                    <div class="row border p-5">Supporting vis related to physical actviity vs sleep quality/stress with-->
+<!--                        possible filtering based on occupation</div>-->
+<!--                    <div>POSSIBLY ADD A SOURCE HERE TOO</div>-->
+                    <div class="row border p-5">
+                        <img src="styles/assets/activity.jpeg" alt="physical activity img" class="img-fluid" />
+                    </div>
                 </div>
             </div>
             <div class="col-6">
                 <div class="row border">
-                    <div class="alert alert-success p-5">Solution 2 (related to mindfulness)</div>
-                    <div class="row border p-5">Table/Img for mindfulness</div>
+                    <div class="alert alert-success p-5">
+                        <h4>Solution 2: Mindfulness and Meditation</h4>
+                        <p>A lot of stress is self-induced, and is major reason for anxiety as well. Learn to take control
+                            over your mind and your thoughts and watch your health excel!</p>
+                    </div>
+                    <div class="row border p-5">
+                        <img src="styles/assets/mindfulness.jpg" alt="mindfulness img" class="img-fluid" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,8 +136,10 @@
 
     <script src="js/LineChart.js"></script>
     <script src="js/ScatterPlot.js"></script>
+    <script src="js/ScatterPlot2.js"></script>
     <script src="js/HeatMap.js"></script>
     <script src="js/main.js"></script>
+
 </body>
 
 </html>

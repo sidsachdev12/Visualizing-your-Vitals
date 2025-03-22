@@ -56,3 +56,21 @@ d3.csv("./data/sleep_lifestyle_dataset.csv").then(data => {
     height: 500
   });
 });
+
+
+// vis 4
+d3.csv("./data/applewatch_fitbit_dataset.csv").then(data => {
+  data = data.map(d => {
+    return {
+      height: +d.height,
+      weight: +d.weight,
+      rhr: +d.resting_heart_rate
+    }
+  })
+  const scatPlot = new ScatterPlot2({
+    parentElement: "#scatter-plot-w",
+    data: data,
+    width: 800,
+    height: 500
+  })
+})
