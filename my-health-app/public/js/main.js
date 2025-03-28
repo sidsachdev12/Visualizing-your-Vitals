@@ -48,29 +48,71 @@ d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
 });
 
 // vis 3 – Using resting heart rate instead of entropy_heart
-d3.csv("./data/sleep_lifestyle_dataset.csv").then(data => {
+d3.csv("./data/sleep_lifestyle_dataset.csv").then((data) => {
   const heatMap = new HeatMap({
     parentElement: "#heatMap",
     data: data,
     width: 800,
-    height: 500
+    height: 500,
   });
 });
 
-
 // vis 4
-d3.csv("./data/applewatch_fitbit_dataset.csv").then(data => {
-  data = data.map(d => {
+d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
+  data = data.map((d) => {
     return {
       height: +d.height,
       weight: +d.weight,
-      rhr: +d.resting_heart_rate
-    }
-  })
+      rhr: +d.resting_heart_rate,
+    };
+  });
   const scatPlot = new ScatterPlot2({
     parentElement: "#scatter-plot-w",
     data: data,
     width: 800,
-    height: 500
-  })
-})
+    height: 500,
+  });
+});
+
+// const handleHourClick = (day) => {
+//   selectedDay = day;
+//   mode = "hourly";
+
+//   const hourlyData = data.filter(
+//     (d) =>
+//       d.timestamp.getFullYear() === day.getFullYear() &&
+//       d.timestamp.getMonth() === day.getMonth() &&
+//       d.timestamp.getDate() === day.getDate()
+//   );
+
+//   setFilteredData(hourlyData);
+// };
+
+// Vis 4 - My Heart Rate
+
+const mode = "daily"; // "daily" or "hourly"
+const defaultDate = new Date(2023, 0, 1);
+const selectedDay = defaultDate;
+
+// Define a parser for the timestamp using d3.timeParse
+const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
+
+d3.csv("./data/heart_rate_data.csv", function (row) {
+  // Parse the timestamp and convert heart_rate to a number.
+  row.timestamp = parseTime(row.timestamp);
+  row.heart_rate = +row.heart_rate;
+  return row;
+}).then((data) => {
+  const hourlyData = data.filter(
+    (d) =>
+      d.timestamp.getFullYear() === selectedDay.getFullYear() &&
+      d.timestamp.getMonth() === selectedDay.getMonth() &&
+      d.timestamp.getDate() === selectedDay.getDate()
+  );
+
+  const heart_scatter = new MyHeartScatter(
+    "heart-scatter",
+    hourlyData,
+    selectedDay.getHours()
+  );
+});
