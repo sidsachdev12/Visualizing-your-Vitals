@@ -1,12 +1,30 @@
 class MyHeartDailyRange {
-  constructor(parentElement, data, changeMode) {
+  constructor(parentElement, data, onHourClickCallback) {
     this.parentElement = parentElement;
     this.data = data;
-    this.changeMode = changeMode;
+    this.onHourClickCallback = onHourClickCallback;
 
     this.filteredData = [];
-
     this.day = new Date(2023, 0, 1);
+
+    // Create a fixed tooltip element (only once)
+    // Check if it already exists first
+    if (!document.getElementById("fixed-heart-tooltip")) {
+      const tooltipDiv = document.createElement("div");
+      tooltipDiv.id = "fixed-heart-tooltip";
+      tooltipDiv.style.position = "absolute";
+      tooltipDiv.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+      tooltipDiv.style.color = "white";
+      tooltipDiv.style.padding = "10px";
+      tooltipDiv.style.borderRadius = "5px";
+      tooltipDiv.style.pointerEvents = "none";
+      tooltipDiv.style.display = "none";
+      tooltipDiv.style.zIndex = "10000";
+      document.body.appendChild(tooltipDiv);
+    }
+
+    // Store a reference to the tooltip
+    this.tooltipElement = document.getElementById("fixed-heart-tooltip");
 
     this.initVis();
   }
@@ -64,6 +82,16 @@ class MyHeartDailyRange {
     vis.yAxis = d3.axisLeft(vis.y).ticks(5);
     vis.svg.append("g").attr("class", "y-axis").call(vis.yAxis);
 
+    // Add y-axis label
+    vis.svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - vis.margin.left)
+      .attr("x", 0 - vis.height / 2)
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Heart Rate (bpm)");
+
     vis.wrangleData();
   }
 
@@ -85,6 +113,9 @@ class MyHeartDailyRange {
         hour, // Date object representing the hour (e.g., 2023-03-20 07:00)
         min: d3.min(values, (v) => v.heart_rate),
         max: d3.max(values, (v) => v.heart_rate),
+        avg: d3.mean(values, (v) => v.heart_rate),
+        count: values.length,
+        values: values, // Keep the raw values for potentially passing to callback
       })
     ).sort((a, b) => a.hour - b.hour);
 
@@ -92,9 +123,9 @@ class MyHeartDailyRange {
     vis.globalMin = d3.min(vis.hourlyData, (d) => d.min) || 40;
     vis.globalMax = d3.max(vis.hourlyData, (d) => d.max) || 120;
 
-    // x-scale: from earliest hour to the next day’s hour
+    // x-scale: from earliest hour to the next day's hour
     // Or just 0–24 if you always show a full day
-    vis.startOfDay = d3.timeDay.floor(vis.hourlyData[0].hour);
+    vis.startOfDay = d3.timeDay.floor(vis.hourlyData[0]?.hour || vis.day);
     vis.endOfDay = d3.timeDay.offset(vis.startOfDay, 1); // +1 day
 
     vis.updateVis();
@@ -106,20 +137,15 @@ class MyHeartDailyRange {
     vis.y.domain([vis.globalMin - 5, vis.globalMax + 5]);
 
     // For each hour, draw an ellipse covering min..max
-    // Ellipse center: ( x(hour + half?), y(midpoint of min & max) )
-    // Ellipse rx: a small fixed horizontal radius
-    // Ellipse ry: half the vertical distance between min & max
     const ellipseRx = 8; // horizontal radius in pixels
-    vis.svg
+
+    // Store a reference to the ellipses for easier access in event handlers
+    const ellipses = vis.svg
       .selectAll("ellipse.hour")
       .data(vis.hourlyData)
       .join("ellipse")
       .attr("class", "hour-oval")
-      .attr("cx", (d) => {
-        // center at the hour + half hour offset if you prefer
-        // But Apple Health typically centers at the hour
-        return vis.x(d.hour);
-      })
+      .attr("cx", (d) => vis.x(d.hour))
       .attr("cy", (d) => {
         const mid = (d.min + d.max) / 2;
         return vis.y(mid);
@@ -133,10 +159,60 @@ class MyHeartDailyRange {
       })
       .attr("fill", "#ff2d55") // Apple Health–like pink
       .attr("opacity", 0.6)
-      .on("click", (event, d) => {
-        if (vis.changeMode) {
-          vis.changeMode(d);
+      .style("cursor", "pointer"); // Add pointer cursor to indicate clickability
+
+    // Using JavaScript event listeners directly instead of D3 event handling
+    ellipses.each(function (d) {
+      const ellipse = this; // DOM element
+
+      // Mouseover event
+      ellipse.addEventListener("mouseover", function (event) {
+        // Highlight ellipse
+        d3.select(this)
+          .attr("opacity", 1.0)
+          .attr("stroke", "#ff0040")
+          .attr("stroke-width", 2);
+
+        // Create tooltip content
+        const tooltipContent = `
+          <div style="font-weight: bold">${d3.timeFormat("%-I %p")(
+            d.hour
+          )}</div>
+          <div>Range: ${Math.round(d.min)} - ${Math.round(d.max)} bpm</div>
+          <div>Avg: ${Math.round(d.avg * 10) / 10} bpm</div>
+          <div>Readings: ${d.count}</div>
+        `;
+
+        // Update tooltip content and position
+        vis.tooltipElement.innerHTML = tooltipContent;
+        vis.tooltipElement.style.left = event.pageX + 15 + "px";
+        vis.tooltipElement.style.top = event.pageY - 15 + "px";
+        vis.tooltipElement.style.display = "block";
+      });
+
+      // Mousemove event
+      ellipse.addEventListener("mousemove", function (event) {
+        vis.tooltipElement.style.left = event.pageX + 15 + "px";
+        vis.tooltipElement.style.top = event.pageY - 15 + "px";
+      });
+
+      // Mouseout event
+      ellipse.addEventListener("mouseout", function () {
+        // Reset ellipse appearance
+        d3.select(this).attr("opacity", 0.6).attr("stroke", "none");
+
+        // Hide tooltip
+        vis.tooltipElement.style.display = "none";
+      });
+
+      // Click event
+      ellipse.addEventListener("click", function () {
+        // Hide tooltip
+        vis.tooltipElement.style.display = "none";
+        if (vis.onHourClickCallback) {
+          vis.onHourClickCallback(d);
         }
       });
+    });
   }
 }
