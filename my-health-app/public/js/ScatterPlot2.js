@@ -2,7 +2,7 @@ class ScatterPlot2 {
     constructor(_config) {
         this.config = {
             parentElement: _config.parentElement,
-            width: _config.width || 800,
+            width: _config.width || 900,
             height: _config.height || 400,
             margin: _config.margin || { top: 30, right: 30, bottom: 50, left: 60 }
         };
@@ -43,7 +43,7 @@ class ScatterPlot2 {
             .attr("x", vis.width / 2)
             .attr("y", vis.height + 35)
             .attr("text-anchor", "middle")
-            .text("Height");
+            .text("Height (cm)");
 
         vis.svg.append("text")
             .attr("class", "y-axis-label")
@@ -51,7 +51,7 @@ class ScatterPlot2 {
             .attr("y", -40)
             .attr("x", -vis.height / 2)
             .attr("text-anchor", "middle")
-            .text("Weight");
+            .text("Weight (Kg)");
 
         vis.wrangleData();
     }
@@ -78,7 +78,7 @@ class ScatterPlot2 {
             let lineData = d3.range(d3.min(vis.data, d => d.height) - 10, d3.max(vis.data, d => d.height) + 10)
             lineData = lineData.map(d => {
                 let w = b * (d / 100) * (d / 100);
-                return {"h": d, "w": w}
+                return { "h": d, "w": w }
             });
             let line = d3.line()
                 .x(d => vis.xScale(d.h))
@@ -119,6 +119,37 @@ class ScatterPlot2 {
             // .duration(1000)
             .attr("cx", d => vis.xScale(d.height))
             .attr("cy", d => vis.yScale(d.weight));
+
+
+        // add a legend for the resting heart rate colors
+        const legendData = [
+            { label: "Low Resting Heart Rate (<75)", color: "#7BB662" },
+            { label: "Moderate Resting Heart Rate (<90)", color: "#FFD301" },
+            { label: "High Resting Heart Rate (>=90)", color: "#D61F1F" }
+        ];
+
+        // remove any old legends
+        vis.svg.selectAll(".legend").remove();
+
+        // add the legends
+        const legend = vis.svg.selectAll(".legend")
+            .data(legendData)
+            .enter()
+            .append("g")
+            .attr("class", "legend")
+            .attr("transform", (d, i) => `translate(${50}, ${20 + i * 25})`);
+
+        legend.append("rect")
+            .attr("x", 0)
+            .attr("width", 20)
+            .attr("height", 20)
+            .attr("fill", d => d.color);
+
+        legend.append("text")
+            .attr("x", 30)
+            .attr("y", 15)
+            .style("font-size", "12px")
+            .text(d => d.label);
     }
 
 }
