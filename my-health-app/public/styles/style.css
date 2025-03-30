@@ -50,7 +50,7 @@ img {
   fill: red; /* White color for the heart (since background is red) */
   cursor: pointer;
   font-size: 48px;
-  /* animation: beat 0.7s infinite; */
+  animation: beat 0.7s infinite;
 }
 
 @keyframes beat {
@@ -59,17 +59,7 @@ img {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.1); /* Adjust scale factor for a subtle beat */
-  }
-}
-
-@keyframes beat {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
+    transform: scale(1.2); /* Adjust scale factor for a subtle beat */
   }
 }
 

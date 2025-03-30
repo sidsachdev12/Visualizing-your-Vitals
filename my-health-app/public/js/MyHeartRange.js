@@ -14,7 +14,9 @@ class MyHeartDailyRange {
   initVis() {
     const vis = this;
 
-    d3.select(vis.parentElement).select("svg").remove();
+    d3.select("#" + vis.parentElement)
+      .select("svg")
+      .remove();
 
     vis.margin = { top: 20, right: 30, bottom: 40, left: 50 };
     vis.width =
@@ -116,7 +118,6 @@ class MyHeartDailyRange {
       .attr("cx", (d) => {
         // center at the hour + half hour offset if you prefer
         // But Apple Health typically centers at the hour
-        console.log(d.hour);
         return vis.x(d.hour);
       })
       .attr("cy", (d) => {
@@ -133,8 +134,8 @@ class MyHeartDailyRange {
       .attr("fill", "#ff2d55") // Apple Health–like pink
       .attr("opacity", 0.6)
       .on("click", (event, d) => {
-        if (onHourClick) {
-          onHourClick(d.hour);
+        if (vis.changeMode) {
+          vis.changeMode(d);
         }
       });
   }

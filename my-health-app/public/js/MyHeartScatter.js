@@ -27,7 +27,9 @@ class MyHeartScatter {
       vis.wrangleData();
     });
 
-    d3.select(vis.parentElement).select("svg").remove();
+    d3.select("#" + vis.parentElement)
+      .select("svg")
+      .remove();
 
     vis.margin = { top: 20, right: 30, bottom: 40, left: 50 };
     vis.width =

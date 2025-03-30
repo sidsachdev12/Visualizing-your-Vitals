@@ -97,40 +97,90 @@ let selectedDay = defaultDate;
 // Define a parser for the timestamp using d3.timeParse
 const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
-MyHeartVisualizations();
+// MyHeartVisualizations();
 
-document.getElementById("backBtn").addEventListener("click", () => {
-  if (mode === "daily") {
-    mode = "hourly";
-  } else {
-    mode = "daily";
-  }
+// function MyHeartVisualizations() {
+//   d3.csv("./data/heart_rate_data.csv", function (row) {
+//     // Parse the timestamp and convert heart_rate to a number.
+//     row.timestamp = parseTime(row.timestamp);
+//     row.heart_rate = +row.heart_rate;
+//     return row;
+//   }).then((data) => {
+//     const hourlyData = data.filter(
+//       (d) =>
+//         d.timestamp.getFullYear() === selectedDay.getFullYear() &&
+//         d.timestamp.getMonth() === selectedDay.getMonth() &&
+//         d.timestamp.getDate() === selectedDay.getDate()
+//     );
 
+//     if (mode === "daily") {
+//       const daily_heart_range = new MyHeartDailyRange("heart-scatter", data);
+//     } else {
+//       const heart_scatter = new MyHeartScatter(
+//         "heart-scatter",
+//         hourlyData,
+//         selectedDay.getHours()
+//       );
+//     }
+//   });
+// }
+
+d3.csv("./data/heart_rate_data.csv", function (row) {
+  // Parse the timestamp and convert heart_rate to a number.
+  row.timestamp = parseTime(row.timestamp);
+  row.heart_rate = +row.heart_rate;
+  return row;
+}).then((data) => {
   MyHeartVisualizations();
-});
 
-function MyHeartVisualizations() {
-  d3.csv("./data/heart_rate_data.csv", function (row) {
-    // Parse the timestamp and convert heart_rate to a number.
-    row.timestamp = parseTime(row.timestamp);
-    row.heart_rate = +row.heart_rate;
-    return row;
-  }).then((data) => {
-    const hourlyData = data.filter(
-      (d) =>
-        d.timestamp.getFullYear() === selectedDay.getFullYear() &&
-        d.timestamp.getMonth() === selectedDay.getMonth() &&
-        d.timestamp.getDate() === selectedDay.getDate()
-    );
+  document.getElementById("backBtn").addEventListener("click", () => {
+    if (mode === "daily") {
+      mode = "hourly";
+    } else {
+      mode = "daily";
+    }
+
+    MyHeartVisualizations();
+  });
+
+  function MyHeartVisualizations() {
+    // Clear existing SVG to prevent duplication
+    d3.select("#heart-scatter").select("svg").remove();
 
     if (mode === "daily") {
-      const daily_heart_range = new MyHeartDailyRange("heart-scatter", data);
+      // Callback function to handle ellipse click
+      const onHourClick = (hourData) => {
+        console.log("Hour clicked in main.js:", hourData);
+        selectedDay = hourData.hour; // Store the selected day/hour
+        selectedHourData = hourData; // Store the hour data
+        mode = "hourly"; // Switch to hourly view
+        MyHeartVisualizations(); // Redraw the visualization
+      };
+
+      // Create daily range visualization with the callback
+      const daily_heart_range = new MyHeartDailyRange(
+        "heart-scatter",
+        data,
+        onHourClick
+      );
     } else {
+      // Filter data for the selected day/hour
+      const hourlyData = data.filter(
+        (d) =>
+          d.timestamp.getFullYear() === selectedDay.getFullYear() &&
+          d.timestamp.getMonth() === selectedDay.getMonth() &&
+          d.timestamp.getDate() === selectedDay.getDate() &&
+          (selectedHourData
+            ? d.timestamp.getHours() === selectedDay.getHours()
+            : true)
+      );
+
+      // Create hourly visualization
       const heart_scatter = new MyHeartScatter(
         "heart-scatter",
         hourlyData,
         selectedDay.getHours()
       );
     }
-  });
-}
+  }
+});
