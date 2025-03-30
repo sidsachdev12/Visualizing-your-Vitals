@@ -90,29 +90,47 @@ d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
 
 // Vis 4 - My Heart Rate
 
-const mode = "daily"; // "daily" or "hourly"
-const defaultDate = new Date(2023, 0, 1);
-const selectedDay = defaultDate;
+let mode = "daily"; // "daily" or "hourly"
+let defaultDate = new Date(2023, 0, 1);
+let selectedDay = defaultDate;
 
 // Define a parser for the timestamp using d3.timeParse
 const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
-d3.csv("./data/heart_rate_data.csv", function (row) {
-  // Parse the timestamp and convert heart_rate to a number.
-  row.timestamp = parseTime(row.timestamp);
-  row.heart_rate = +row.heart_rate;
-  return row;
-}).then((data) => {
-  const hourlyData = data.filter(
-    (d) =>
-      d.timestamp.getFullYear() === selectedDay.getFullYear() &&
-      d.timestamp.getMonth() === selectedDay.getMonth() &&
-      d.timestamp.getDate() === selectedDay.getDate()
-  );
+MyHeartVisualizations();
 
-  const heart_scatter = new MyHeartScatter(
-    "heart-scatter",
-    hourlyData,
-    selectedDay.getHours()
-  );
+document.getElementById("backBtn").addEventListener("click", () => {
+  if (mode === "daily") {
+    mode = "hourly";
+  } else {
+    mode = "daily";
+  }
+
+  MyHeartVisualizations();
 });
+
+function MyHeartVisualizations() {
+  d3.csv("./data/heart_rate_data.csv", function (row) {
+    // Parse the timestamp and convert heart_rate to a number.
+    row.timestamp = parseTime(row.timestamp);
+    row.heart_rate = +row.heart_rate;
+    return row;
+  }).then((data) => {
+    const hourlyData = data.filter(
+      (d) =>
+        d.timestamp.getFullYear() === selectedDay.getFullYear() &&
+        d.timestamp.getMonth() === selectedDay.getMonth() &&
+        d.timestamp.getDate() === selectedDay.getDate()
+    );
+
+    if (mode === "daily") {
+      const daily_heart_range = new MyHeartDailyRange("heart-scatter", data);
+    } else {
+      const heart_scatter = new MyHeartScatter(
+        "heart-scatter",
+        hourlyData,
+        selectedDay.getHours()
+      );
+    }
+  });
+}

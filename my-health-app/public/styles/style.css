@@ -97,3 +97,14 @@ button {
 .back-button {
   margin-top: 15px;
 }
+
+.x-axis text,
+.y-axis text {
+  fill: black; /* White tick labels */
+}
+.x-axis line,
+.x-axis path,
+.y-axis line,
+.y-axis path {
+  stroke: black; /* Light gray axis lines */
+}
