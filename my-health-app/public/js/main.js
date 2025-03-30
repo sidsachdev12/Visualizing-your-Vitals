@@ -97,34 +97,6 @@ let selectedDay = defaultDate;
 // Define a parser for the timestamp using d3.timeParse
 const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
-// MyHeartVisualizations();
-
-// function MyHeartVisualizations() {
-//   d3.csv("./data/heart_rate_data.csv", function (row) {
-//     // Parse the timestamp and convert heart_rate to a number.
-//     row.timestamp = parseTime(row.timestamp);
-//     row.heart_rate = +row.heart_rate;
-//     return row;
-//   }).then((data) => {
-//     const hourlyData = data.filter(
-//       (d) =>
-//         d.timestamp.getFullYear() === selectedDay.getFullYear() &&
-//         d.timestamp.getMonth() === selectedDay.getMonth() &&
-//         d.timestamp.getDate() === selectedDay.getDate()
-//     );
-
-//     if (mode === "daily") {
-//       const daily_heart_range = new MyHeartDailyRange("heart-scatter", data);
-//     } else {
-//       const heart_scatter = new MyHeartScatter(
-//         "heart-scatter",
-//         hourlyData,
-//         selectedDay.getHours()
-//       );
-//     }
-//   });
-// }
-
 d3.csv("./data/heart_rate_data.csv", function (row) {
   // Parse the timestamp and convert heart_rate to a number.
   row.timestamp = parseTime(row.timestamp);
@@ -183,4 +155,27 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
       );
     }
   }
+});
+
+// Parse a date string in the format "YYYY-MM-DD" into a JavaScript Date object
+let parseDate = d3.timeParse("%Y-%m-%d");
+
+// Format a JavaScript Date object into a string in the format "YYYY-MM-DD"
+let formatDate = d3.timeFormat("%Y-%m-%d");
+
+d3.csv("data/sleep_data.csv", (row) => {
+  row.date = parseDate(row.date);
+  row.total_sleep = +row.total_sleep / 60;
+  row.awake = +row.awake / 60;
+  row.rem = +row.rem / 60;
+  row.core = +row.core / 60;
+  row.deep = +row.deep / 60;
+  row.awake_pct = +row.awake_pct;
+  row.rem_pct = +row.rem_pct;
+  row.core_pct = +row.core_pct;
+  row.deep_pct = +row.deep_pct;
+
+  return row;
+}).then((data) => {
+  const sleepViz = new sleepAreaChart("sleep-chart", data);
 });

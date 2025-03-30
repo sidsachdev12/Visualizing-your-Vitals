@@ -58,7 +58,8 @@
                 >
               </div>
             </div>
-            <div id="my-heart">
+            <div id="my-heart" class="row border p-5">
+              <h3>My Heart Beat Trend</h3>
               <div class="navigation">
                 <button id="prevHourBtn">&larr;</button>
                 <span class="time-display" id="hourDisplay">12:00 - 13:00</span>
@@ -78,6 +79,19 @@
               <button class="back-button" id="backBtn">
                 Go Back to Daily Heart Ranges
               </button>
+            </div>
+            </div>
+
+          <div id="sleepAreaChart" class="row border p-5">
+            <h3>My Sleep</h3>
+            <div id="legend"></div>
+            <div id="chart-container">
+              <button id="left-arrow">&larr;</button>
+              <!-- Left arrow -->
+              <div id="sleep-chart"></div>
+              <!-- Chart container -->
+              <button id="right-arrow">&rarr;</button>
+              <!-- Right arrow -->
             </div>
           </div>
 
@@ -334,6 +348,7 @@
     <!-- d3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
+    <script src="js/SleepAreaChart.js"></script>
     <script src="js/MyHeartScatter.js"></script>
     <script src="js/MyHeartRange.js"></script>
     <script src="js/LineChart.js"></script>
