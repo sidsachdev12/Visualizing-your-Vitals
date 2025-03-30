@@ -50,7 +50,7 @@ d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
 // vis 3 – Using resting heart rate instead of entropy_heart
 d3.csv("./data/sleep_lifestyle_dataset.csv").then(data => {
   const heatMap = new HeatMap({
-    parentElement: "#heatMap", // Ensure an HTML element with id "heatMap" exists
+    parentElement: "#heatMap",
     data: data,
     width: 800,
     height: 500

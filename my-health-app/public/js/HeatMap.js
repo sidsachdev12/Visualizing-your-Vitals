@@ -22,6 +22,15 @@ class HeatMap {
             .domain([90, 120]) // Blood pressure range
             .range([100, 700]);
 
+        // x axis label
+        vis.svg.append("text")
+            .attr("class", "x-axis-label")
+            .attr("x", vis.width / 2)  // centered between 100 and 700
+            .attr("y", vis.height - 40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "14px")
+            .text("Blood Pressure (mmHg)");
+
         // bubble size
         vis.sizeScale = d3.scaleSqrt()
             .domain([50, 120])
@@ -47,11 +56,12 @@ class HeatMap {
             } else {
                 d["Blood Pressure"] = 0;
             }
-            
+
             d["Heart Rate"] = +d["Heart Rate"];
             d["Daily Steps"] = +d["Daily Steps"];
             d.Cortisol = +d.Cortisol;
 
+            // Normal Weight + Normal should be considered the same BMI category
             if (d["BMI Category"] === "Normal Weight") {
                 d["BMI Category"] = "Normal";
             }
@@ -93,7 +103,7 @@ class HeatMap {
     updateVis() {
         const vis = this;
 
-        // insert xaxis
+        // insert x axis
         const xAxis = d3.axisBottom(vis.xScale).ticks(5);
         vis.svg.append("g")
             .attr("transform", `translate(0, 400)`)
@@ -117,7 +127,7 @@ class HeatMap {
             .enter()
             .append("g")
             .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(600, ${100 + i * 40})`);
+            .attr("transform", (d, i) => `translate(600, ${100 + i * 25})`);
 
         legend.append("circle")
             .attr("r", 10)
@@ -126,7 +136,12 @@ class HeatMap {
         legend.append("text")
             .attr("x", 20)
             .attr("y", 5)
-            .text(d => d.category)
+            .text(d => 
+                {
+                    if (d.category === "Normal") return "Normal: 18.5–24.9 kg/m²";
+                    else if (d.category === "Overweight") return "Overweight: 25–29.9 kg/m²";
+                    else if (d.category === "Obese") return "Obese: >=30 kg/m²";
+                })
             .style("font-size", "14px");
 
         // title
