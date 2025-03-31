@@ -188,3 +188,26 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
     }
   }
 });
+
+// Parse a date string in the format "YYYY-MM-DD" into a JavaScript Date object
+let parseDate = d3.timeParse("%Y-%m-%d");
+
+// Format a JavaScript Date object into a string in the format "YYYY-MM-DD"
+let formatDate = d3.timeFormat("%Y-%m-%d");
+
+d3.csv("data/sleep_data.csv", (row) => {
+  row.date = parseDate(row.date);
+  row.total_sleep = +row.total_sleep / 60;
+  row.awake = +row.awake / 60;
+  row.rem = +row.rem / 60;
+  row.core = +row.core / 60;
+  row.deep = +row.deep / 60;
+  row.awake_pct = +row.awake_pct;
+  row.rem_pct = +row.rem_pct;
+  row.core_pct = +row.core_pct;
+  row.deep_pct = +row.deep_pct;
+
+  return row;
+}).then((data) => {
+  sleepViz = new sleepAreaChart("sleep-chart", data); // Initialize visualization
+});
