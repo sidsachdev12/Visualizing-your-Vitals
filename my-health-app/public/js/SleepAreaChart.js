@@ -13,6 +13,22 @@ class sleepAreaChart {
     this.formatDate = d3.timeFormat("%b %d, %y");
     this.parseDate = d3.timeParse("%Y-%m-%d");
 
+    // Initialize tooltip div
+    this.tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "sleep-tooltip")
+      .style("position", "absolute")
+      .style("visibility", "hidden")
+      .style("background-color", "rgba(0, 0, 0, 0.8)")
+      .style("color", "white")
+      .style("padding", "10px")
+      .style("border-radius", "5px")
+      .style("font-size", "12px")
+      .style("pointer-events", "none")
+      .style("z-index", "1000")
+      .style("box-shadow", "0 2px 8px rgba(0, 0, 0, 0.3)");
+
     this.initViz();
   }
 
@@ -63,7 +79,18 @@ class sleepAreaChart {
       .call(d3.axisBottom(viz.x).tickFormat(viz.formatDate));
 
     // Add Y axis
-    viz.svg.append("g").attr("class", "y-axis").call(d3.axisLeft(viz.y));
+    viz.svg
+      .append("g")
+      .attr("class", "y-axis")
+      .call(d3.axisLeft(viz.y))
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -40)
+      .attr("x", -(viz.height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "black")
+      .text("Hours");
 
     viz.leftArrow = d3.select("#left-arrow").on("click", () => {
       viz.updateDates(false);
@@ -97,6 +124,13 @@ class sleepAreaChart {
     });
 
     viz.updateViz();
+  }
+
+  // Helper function to format sleep duration
+  formatSleepDuration(hours) {
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.round((hours - wholeHours) * 60);
+    return `${wholeHours}h ${minutes}m`;
   }
 
   // 3. Draw and update the visualization
@@ -139,7 +173,7 @@ class sleepAreaChart {
       .attr("width", viz.x.bandwidth())
       .attr("fill", (d) => viz.color(d.key)); // Use the key property for color
 
-    // Add new bars
+    // Add new bars with tooltip interactions
     viz.bars
       .enter()
       .append("rect")
@@ -148,7 +182,90 @@ class sleepAreaChart {
       .attr("y", (d) => viz.y(d[1]))
       .attr("height", (d) => viz.y(d[0]) - viz.y(d[1]))
       .attr("width", viz.x.bandwidth())
-      .attr("fill", (d) => viz.color(d.key)); // Use the key property for color
+      .attr("fill", (d) => viz.color(d.key)) // Use the key property for color
+      .style("cursor", "pointer")
+      .on("mouseover", function (event, d) {
+        // Highlight the bar
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr("opacity", 0.8)
+          .attr("stroke", "#fff")
+          .attr("stroke-width", 2);
+
+        // Calculate duration for this specific sleep phase
+        const duration = d[1] - d[0];
+
+        // Format date
+        const formattedDate = viz.formatDate(d.data.date);
+
+        // Get day of the week
+        const dayOfWeek = d3.timeFormat("%A")(d.data.date);
+
+        // Capitalize first letter of sleep phase
+        const sleepPhase = d.key.charAt(0).toUpperCase() + d.key.slice(1);
+
+        // Get total sleep for that day
+        const totalSleep =
+          d.data.deep + d.data.core + d.data.rem + d.data.awake;
+
+        // Calculate percentage of this phase
+        const percentage = Math.round((duration / totalSleep) * 100);
+
+        // Tooltip content
+        let tooltipContent = `
+          <div style="font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px;">
+            ${dayOfWeek}, ${formattedDate}
+          </div>
+          <div style="margin: 5px 0;">
+            <span style="display: inline-block; width: 12px; height: 12px; background-color: ${viz.color(
+              d.key
+            )}; margin-right: 5px;"></span>
+            <strong>${sleepPhase} Sleep:</strong> ${viz.formatSleepDuration(
+          duration
+        )}
+          </div>
+          <div style="margin: 5px 0;">
+            <strong>Total Sleep:</strong> ${viz.formatSleepDuration(totalSleep)}
+          </div>
+          <div style="margin: 5px 0;">
+            <strong>Percentage:</strong> ${percentage}% of sleep
+          </div>
+        `;
+
+        // Show tooltip
+        viz.tooltip
+          .html(tooltipContent)
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 15 + "px")
+          .style("visibility", "visible")
+          .transition()
+          .duration(200)
+          .style("opacity", 1);
+      })
+      .on("mousemove", function (event) {
+        // Move tooltip with cursor
+        viz.tooltip
+          .style("left", event.pageX + 15 + "px")
+          .style("top", event.pageY - 15 + "px");
+      })
+      .on("mouseout", function () {
+        // Reset bar appearance
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .attr("opacity", 1)
+          .attr("stroke", "none");
+
+        // Hide tooltip
+        viz.tooltip
+          .transition()
+          .duration(200)
+          .style("opacity", 0)
+          .on("end", function () {
+            viz.tooltip.style("visibility", "hidden");
+          });
+      });
 
     // Create legend
     viz.legend = d3

@@ -292,3 +292,97 @@ button {
 .lower {
   background-color: #007aff;
 }
+
+/* Sleep Tooltip Styles */
+.sleep-tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background-color: rgba(25, 25, 25, 0.9);
+  color: white;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease-in-out;
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+/* Animation for bars on hover */
+.bar {
+  transition: opacity 0.2s, stroke-width 0.2s;
+}
+
+/* Legend styles */
+#legend {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.legend:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.legend span {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+
+/* Arrow buttons */
+#left-arrow,
+#right-arrow {
+  cursor: pointer;
+  font-size: 24px;
+  padding: 5px 15px;
+  border: none;
+  background-color: transparent;
+  transition: transform 0.2s, color 0.2s;
+}
+
+#left-arrow:hover,
+#right-arrow:hover {
+  transform: scale(1.2);
+  color: #1f77b4;
+}
+
+/* Phase highlight descriptions */
+.phase-description {
+  display: none;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.phase-description.visible {
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sleep-tooltip {
+    padding: 8px;
+    font-size: 11px;
+    max-width: 180px;
+  }
+}
