@@ -1,11 +1,11 @@
 class MyHeartDailyRange {
-  constructor(parentElement, data, onHourClickCallback) {
+  constructor(parentElement, data, selectedDay, onHourClickCallback) {
     this.parentElement = parentElement;
     this.data = data;
     this.onHourClickCallback = onHourClickCallback;
 
     this.filteredData = [];
-    this.day = new Date(2023, 0, 1);
+    this.day = selectedDay;
 
     // Create a fixed tooltip element (only once)
     // Check if it already exists first
@@ -26,11 +26,15 @@ class MyHeartDailyRange {
     // Store a reference to the tooltip
     this.tooltipElement = document.getElementById("fixed-heart-tooltip");
 
+    this.timeDisplay = document.getElementById("timeDisplay");
+
     this.initVis();
   }
 
   initVis() {
     const vis = this;
+
+    vis.timeDisplay.innerText = d3.timeFormat("%d %b, %Y")(vis.day);
 
     d3.select("#" + vis.parentElement)
       .select("svg")
@@ -128,11 +132,25 @@ class MyHeartDailyRange {
     vis.startOfDay = d3.timeDay.floor(vis.hourlyData[0]?.hour || vis.day);
     vis.endOfDay = d3.timeDay.offset(vis.startOfDay, 1); // +1 day
 
+    vis.newAvg = d3.mean(vis.filteredData, (d) => d.heart_rate) || 60;
+    vis.roundedAvg = Math.round(vis.newAvg * 10) / 10;
+
+    // Update avgHeartBeat display
+    document.getElementById(
+      "avgHeartBeat"
+    ).innerText = `Your Average Heart Rate on this day was ${vis.roundedAvg}`;
+    document.getElementById("heartIcon").style.animation = `beat ${
+      60 / vis.roundedAvg
+    }s infinite ease-in-out`;
+
     vis.updateVis();
   }
 
   updateVis() {
     const vis = this;
+
+    vis.timeDisplay.innerText = d3.timeFormat("%d %b, %Y")(vis.day);
+
     vis.x.domain([vis.startOfDay, vis.endOfDay]);
     vis.y.domain([vis.globalMin - 5, vis.globalMax + 5]);
 

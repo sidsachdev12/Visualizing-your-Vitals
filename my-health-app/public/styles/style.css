@@ -43,16 +43,6 @@ img {
   gap: 0.5rem; /* Space between heart icon and text */
 }
 
-/* The SVG heart icon */
-.heart-icon {
-  width: 80px; /* Adjust as needed */
-  height: 80px;
-  fill: red; /* White color for the heart (since background is red) */
-  cursor: pointer;
-  font-size: 48px;
-  animation: beat 0.7s infinite;
-}
-
 @keyframes beat {
   0%,
   100% {
@@ -234,7 +224,7 @@ button {
   background-color: #eaeaea;
 }
 
-#hourDisplay {
+#timeDisplay {
   font-weight: bold;
   min-width: 120px;
   text-align: center;
@@ -252,10 +242,11 @@ button {
 }
 
 #heartIcon {
-  font-size: 24px;
-  color: #ff2d55;
   animation: beat 1s infinite ease-in-out;
   display: inline-block;
+  fill: red; /* White color for the heart (since background is red) */
+  font-size: 48px;
+  animation: beat 0.7s infinite;
 }
 
 #avgHeartBeat {

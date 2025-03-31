@@ -80,7 +80,7 @@ d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
 let mode = "daily"; // "daily" or "hourly"
 let defaultDate = new Date(2023, 0, 1);
 let selectedDay = defaultDate;
-let selectedHourData = null; // Variable to store the clicked hour data
+let selectedHour = selectedDay.getHours();
 let heartDailyVis = null; // Store daily visualization instance
 let heartScatterVis = null; // Store scatter visualization instance
 
@@ -100,48 +100,79 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
   document.getElementById("backBtn").addEventListener("click", () => {
     if (mode === "hourly") {
       mode = "daily";
-    } else if (mode === "daily") {
-      // If you want to go back to a previous state or do something else
-      // Add your logic here
+    } else {
     }
-
     MyHeartVisualizations();
   });
 
-  // Set up tooltip theme selectors
-  setupTooltipThemeSelectors();
+  document.getElementById("prevHourBtn").addEventListener("click", () => {
+    if (mode === "daily") {
+      selectedDay = d3.timeDay.offset(selectedDay, -1);
+    } else {
+      selectedHour = selectedDay.getHours();
+      selectedDay.setHours(selectedHour - 1);
+    }
+    MyHeartVisualizations();
+  });
+
+  document.getElementById("nextHourBtn").addEventListener("click", () => {
+    if (mode === "daily") {
+      selectedDay = d3.timeDay.offset(selectedDay, +1);
+    } else {
+      selectedHour = selectedDay.getHours();
+      selectedDay.setHours(selectedHour + 1);
+    }
+    MyHeartVisualizations();
+  });
 
   function MyHeartVisualizations() {
     if (mode === "daily") {
+      document.getElementById("backBtn").hidden = true;
       // Callback function to handle ellipse click
       const onHourClick = (hourData) => {
-        console.log("Hour clicked in main.js:", hourData);
         selectedDay = hourData.hour; // Store the selected day/hour
-        selectedHourData = hourData; // Store the hour data
         mode = "hourly"; // Switch to hourly view
         MyHeartVisualizations(); // Redraw the visualization
       };
+
+      if (selectedDay === defaultDate) {
+        document.getElementById("prevHourBtn").hidden = true;
+      } else {
+        document.getElementById("prevHourBtn").hidden = false;
+      }
 
       // Create daily range visualization with the callback and tooltip config
       heartDailyVis = new MyHeartDailyRange(
         "heart-scatter",
         data,
-        onHourClick,
-        tooltipThemes[currentTooltipTheme] // Pass current tooltip theme
+        selectedDay,
+        onHourClick
       );
 
       // Clear reference to scatter visualization
       heartScatterVis = null;
     } else {
+      document.getElementById("backBtn").hidden = false;
+
+      if (selectedDay.getHours() === 23) {
+        document.getElementById("nextHourBtn").hidden = true;
+      } else {
+        document.getElementById("nextHourBtn").hidden = false;
+      }
+
+      if (selectedDay.getHours() === 0) {
+        document.getElementById("prevHourBtn").hidden = true;
+      } else {
+        document.getElementById("prevHourBtn").hidden = false;
+      }
+
       // Filter data for the selected day/hour
       const hourlyData = data.filter(
         (d) =>
           d.timestamp.getFullYear() === selectedDay.getFullYear() &&
           d.timestamp.getMonth() === selectedDay.getMonth() &&
           d.timestamp.getDate() === selectedDay.getDate() &&
-          (selectedHourData
-            ? d.timestamp.getHours() === selectedDay.getHours()
-            : true)
+          d.timestamp.getHours() === selectedDay.getHours()
       );
 
       // Create hourly visualization with tooltip config
@@ -149,48 +180,11 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
         "heart-scatter",
         hourlyData,
         selectedDay.getHours(),
-        null, // onBack callback not needed since we have a button
-        tooltipThemes[currentTooltipTheme] // Pass current tooltip theme
+        null // onBack callback not needed since we have a button
       );
 
       // Clear reference to daily visualization
       heartDailyVis = null;
-    }
-  }
-
-  // Function to set up tooltip theme selector event listeners
-  function setupTooltipThemeSelectors() {
-    // If you have radio buttons or dropdown for tooltip themes
-    const themeSelector = document.getElementById("tooltip-theme-selector");
-    if (themeSelector) {
-      themeSelector.addEventListener("change", function () {
-        currentTooltipTheme = this.value;
-        updateTooltipTheme();
-      });
-    }
-
-    // If you have individual buttons for each theme
-    const themeButtons = document.querySelectorAll(".tooltip-theme-btn");
-    themeButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const themeName = this.dataset.theme;
-        currentTooltipTheme = themeName;
-
-        // Highlight active button
-        themeButtons.forEach((btn) => btn.classList.remove("active"));
-        this.classList.add("active");
-
-        updateTooltipTheme();
-      });
-    });
-  }
-
-  // Function to update tooltip theme for active visualization
-  function updateTooltipTheme() {
-    if (heartDailyVis && mode === "daily") {
-      heartDailyVis.updateTooltipConfig(tooltipThemes[currentTooltipTheme]);
-    } else if (heartScatterVis && mode === "hourly") {
-      heartScatterVis.updateTooltipConfig(tooltipThemes[currentTooltipTheme]);
     }
   }
 });

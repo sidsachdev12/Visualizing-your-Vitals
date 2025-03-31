@@ -4,6 +4,7 @@ class MyHeartScatter {
     this.data = data;
     this.selectedHour = selectedHour;
     this.onBack = onBack;
+    this.timeDisplay = document.getElementById("timeDisplay");
 
     // Default tooltip configuration with option to override
     this.tooltipConfig = {
@@ -59,19 +60,10 @@ class MyHeartScatter {
   initVis() {
     const vis = this;
 
-    document.getElementById("prevHourBtn").addEventListener("click", () => {
-      vis.selectedHour =
-        vis.selectedHour > 0 ? vis.selectedHour - 1 : vis.selectedHour;
-
-      vis.wrangleData();
-    });
-
-    document.getElementById("nextHourBtn").addEventListener("click", () => {
-      vis.selectedHour =
-        vis.selectedHour < 23 ? vis.selectedHour + 1 : vis.selectedHour;
-
-      vis.wrangleData();
-    });
+    // Update the hour display
+    vis.timeDisplay.innerText = `${vis.selectedHour}:00 - ${
+      vis.selectedHour + 1
+    }:00`;
 
     d3.select("#" + vis.parentElement)
       .select("svg")
@@ -148,7 +140,9 @@ class MyHeartScatter {
     vis.roundedAvg = Math.round(vis.newAvg * 10) / 10;
 
     // Update avgHeartBeat display
-    document.getElementById("avgHeartBeat").textContent = vis.roundedAvg;
+    document.getElementById(
+      "avgHeartBeat"
+    ).innerText = `Your Average Heart Rate during this hour was ${vis.roundedAvg}`;
     document.getElementById("heartIcon").style.animation = `beat ${
       60 / vis.roundedAvg
     }s infinite ease-in-out`;
@@ -158,11 +152,6 @@ class MyHeartScatter {
 
   updateVis() {
     const vis = this;
-
-    // Update the hour display
-    document.getElementById("hourDisplay").textContent = `${
-      vis.selectedHour
-    }:00 - ${vis.selectedHour + 1}:00`;
 
     // Update y scale domain based on data range
     vis.y.domain([vis.yMin - 5, vis.yMax + 5]);
