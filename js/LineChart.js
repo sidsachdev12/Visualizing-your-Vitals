@@ -16,21 +16,17 @@ class LineChart {
 
     vis.width =
       document.getElementById(vis.config.parentElement).getBoundingClientRect()
-        .width -
-      vis.config.margin.left -
-      vis.config.margin.right;
+        .width - vis.config.margin.left - vis.config.margin.right;
     vis.height =
       document.getElementById(vis.config.parentElement).getBoundingClientRect()
-        .height -
-      vis.config.margin.top -
-      vis.config.margin.bottom;
+        .height - vis.config.margin.top - vis.config.margin.bottom;
 
     // create svg
     vis.svg = d3
       .select("#" + vis.config.parentElement)
       .append("svg")
-      .attr("width", vis.config.width)
-      .attr("height", vis.config.height)
+      .attr("width", vis.width + vis.config.margin.left + vis.config.margin.right)
+      .attr("height", vis.height + vis.config.margin.top + vis.config.margin.bottom)
       .append("g")
       .attr(
         "transform",
@@ -259,7 +255,7 @@ class LineChart {
       legend = vis.svg
         .append("g")
         .attr("class", "legend")
-        .attr("transform", `translate(${vis.width - 100}, 10)`);
+        .attr("transform", `translate(${vis.width - 150}, 10)`);
 
       legend
         .selectAll("rect")
