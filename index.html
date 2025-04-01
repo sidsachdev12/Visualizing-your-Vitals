@@ -13,196 +13,196 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link href="https://cdn.jsdelivr.net/npm/fullpage.js@4.0.34/dist/fullpage.min.css" rel="stylesheet">
 
     <!-- Completed: custom css included -->
     <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" type="text/css" href="fullpage.css" />
   </head>
 
   <body>
-    <div class="container">
-      <div class="row border">
-        <div class="jumbotron border" style="background-color: rgb(126, 0, 0)">
-          <h1 style="color: rgb(255, 255, 255)">Your stress is KILLING you!</h1>
-          <p style="color: rgb(255, 255, 255)">
-            Discover how stress levels are RUINING your health!
-          </p>
+    <div id="fullpage">
+      <div class="section page">
+        <div class="container">
+          <h1>Your stress is KILLING you!</h1>
+          <h2 style="color: #FA8072;">Discover how stress levels are RUINING your health!</h2>
+          <a class="down-arrow"></a>
         </div>
 
-        <div class="row border">
+      </div>
+      <div class="section page">
+        <div class="container">
           <h2>Insights - How Stress and Sleep Affect your Health</h2>
-          <div class="col-12">
-            <div id="vis-new" class="row border p-5">
-              <h3>THE HEALTH OF YOUR PEERS</h3>
-              <div>
-                <label for="numInput"
-                  >These are the average heart rates of those at age
-                  (20-80):</label
-                >
-                <input
-                  type="number"
-                  id="numInput"
-                  name="numInput"
-                  min="20"
-                  max="80"
-                />
-                <div id="scatterPlot"></div>
-                <p>
-                  A high heart rate is associated with an increased risk of
-                  serious health problems, such as heart attack, anyuerusms,
-                  heart failure, and kidney problems. Check to see if your age
-                  falls within your age group's averages.
-                </p>
-                <a
-                  href="https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/symptoms-causes/syc-20373410"
-                  >Source</a
-                >
-              </div>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <div id="vis-new">
+            <h3>The Health of Your Peers</h3>
+            <div>
+              <label for="numInput" style="font-size:24px;"
+              >These are the average heart rates of those at age
+                (20-80):</label
+              >
+              <input
+                      type="number"
+                      id="numInput"
+                      name="numInput"
+                      min="20"
+                      max="80"
+              />
+              <div id="scatterPlot"></div>
+              <p>
+                A high heart rate is associated with an increased risk of
+                serious health problems, such as heart attack, anyuerusms,
+                heart failure, and kidney problems. Check to see if your age
+                falls within your age group's averages.
+              </p>
+              <a
+                      href="https://www.mayoclinic.org/diseases-conditions/high-blood-pressure/symptoms-causes/syc-20373410"
+              >Source</a
+              >
             </div>
-            <div id="my-heart" class="row border p-5">
-              <h3>My Heart Beat Trend</h3>
-              <div class="navigation">
-                <button id="prevHourBtn">&larr;</button>
-                <span class="time-display" id="timeDisplay"></span>
-                <button id="nextHourBtn">&rarr;</button>
-              </div>
-
-              <div id="heart-scatter"></div>
-
-              <div class="heart-container">
-                <h3 id="avgHeartBeat"></h3>
-                <div class="heart-icon" id="heartIcon">❤️</div>
-              </div>
-
-              <button class="back-button" id="backBtn">
-                Go Back to Daily Heart Ranges
-              </button>
-            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <div id="my-heart">
+            <h3>My Heart Beat</h3>
+            <div class="navigation">
+              <button id="prevHourBtn">&larr;</button>
+              <span class="time-display" id="timeDisplay"></span>
+              <button id="nextHourBtn">&rarr;</button>
             </div>
 
-          <div id="sleepAreaChart" class="row border p-5">
-            <h3>My Sleep</h3>
+            <div id="heart-scatter"></div>
+
+            <div class="heart-container">
+              <h3 id="avgHeartBeat"></h3>
+              <div class="heart-icon" id="heartIcon">❤️</div>
+            </div>
+
+            <button class="back-button" id="backBtn">
+              Go Back to Daily Heart Ranges
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <div class="section page">
+        <div class="container">
+          <h3>My Sleep</h3>
+          <div id="sleepAreaChart">
             <div id="legend"></div>
             <div id="chart-container">
               <button id="left-arrow">&larr;</button>
               <!-- Left arrow -->
               <div id="sleep-chart"></div>
-              <!-- Chart container -->
+              <!-- Chart container-->
               <button id="right-arrow">&rarr;</button>
               <!-- Right arrow -->
             </div>
           </div>
-
-            <div id="vis-9" class="row border p-5">
-              <h3>STRESS OVER TIME</h3>
-              <p>
-                These are your cortisol levels over time depending on activity.
-              </p>
-              <p>
-                INSIGHTS: As stress increases, so does your resting heart rate,
-                which can lead to difficult medicial complications. Frequent
-                rest and meditation will help reduce overall cortisol levels as
-                shown below.
-              </p>
-              <div id="lineChart"></div>
-              <p>
-                High cortisol can result in issues such as elevation of blood
-                pressure, insulin resistance, and hyperglycemia. Managing this
-                stress hormon's level is crucial to your health.
-              </p>
-              <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1993964/"
-                >Source</a
-              >
-            </div>
-
-            <div id="vis-3" class="row border p-5">
-              <h3>Blood Pressure given BMI</h3>
-              <div id="heatMap"></div>
-              <p>
-                The size of each circle corresponds to the sample size of each
-                category. The more data for a group, the larger the circle.
-              </p>
-              <p>
-                INSIGHTS: Clearly, it is evident that a higher BMI has a strong
-                correlation to an increased blood pressure, which increases the
-                risk of hypertension and other diseases.
-              </p>
-            </div>
-
-            <div id="vis-14" class="row border p-5">
-              <h3>Resting Heart Rate Given Height and Weight</h3>
-              <p>
-                This is resting heart rate data given height and weight. See
-                what point you belong to and if your heart rate matches!
-              </p>
-              <p>
-                INSIGHTS: Looks like below the BMI 22 line we have no red
-                resting heart rates (nothing too high). Lots of variance it
-                seems in the higher and lower BMIs and seems a bit
-                unpredictable, can probably be attributed to other factors such
-                as age or occupation.
-              </p>
-              <div id="scatter-plot-w"></div>
-              <!--                    <p>Having a healthy BMI is very important to maintain safe resting heart rate levels.</p>-->
-              <!--                    <a href="">Source</a>-->
-            </div>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <div id="vis-9">
+            <h3>Stress Over Time</h3>
+            <p>
+              These are your cortisol levels over time depending on activity.
+            </p>
+            <p>
+              Insights: As stress increases, so does your resting heart rate,
+              which can lead to difficult medicial complications. Frequent
+              rest and meditation will help reduce overall cortisol levels as
+              shown below.
+            </p>
+            <div id="lineChart"></div>
+            <p>
+              High cortisol can result in issues such as elevation of blood
+              pressure, insulin resistance, and hyperglycemia. Managing this
+              stress hormone's level is crucial to your health.
+            </p>
+            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1993964/"
+            >Source</a
+            >
           </div>
         </div>
-
-        <div class="row border">
-          <div
-            class="jumbotron border pt-2 pb-2"
-            style="background-color: rgb(126, 0, 0)"
-          >
-            <h2 style="color: rgb(255, 255, 255)">What's the Point?</h2>
-            <h4 style="color: rgb(255, 255, 255)">
-              Managing stress levels and having a healthy BMI is very important
-              for your health. They're not independent from each other and both
-              contribute to your Blood Pressure and Heart Rate Levels. Stress
-              doesn't just ruin your sleep but your health, and fixing this will
-              go a long way!
-            </h4>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <div id="vis-3">
+            <h3>Blood Pressure given BMI</h3>
+            <div id="heatMap"></div>
+            <p>
+              The size of each circle corresponds to the sample size of each
+              category. The more data for a group, the larger the circle.
+            </p>
+            <p>
+              Insights: Clearly, it is evident that a higher BMI has a strong
+              correlation to an increased blood pressure, which increases the
+              risk of hypertension and other diseases.
+            </p>
           </div>
-          <div class="row border">
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <div id="vis-14">
+            <h3>Resting Heart Rate Given Height and Weight</h3>
+            <p>
+              This is resting heart rate data given height and weight. See
+              what point you belong to and if your heart rate matches!
+            </p>
+            <div id="scatter-plot-w"></div>
+            <p>
+              Insights: Below the BMI 22 line we have no red
+              resting heart rates. Lots of variance and instability in the heart rates
+              of people with higher and lower BMIs versus those in the normal range.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <h1>What's the Point?</h1>
+          <h2>
+            Managing stress levels and having a healthy BMI is very important
+            for your health. They're not independent of each other and both
+            contribute to your Blood Pressure and Heart Rate Levels. Stress
+            doesn't just ruin your sleep but your health, and fixing this will
+            go a long way!
+          </h2>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
             <h2>Solutions</h2>
-            <div class="col-6">
-              <div class="row border">
-                <div class="alert alert-success p-5">
-                  <h4>Solution 1: Physical Activity</h4>
-                  <p>
-                    Turns out its the same things that reduce stress which also keep
-                    you in shape!
-                  </p>
-                </div>
-    
-                <div class="row border p-5">
-                  <img
-                    src="styles/assets/activity.jpeg"
-                    alt="physical activity img"
-                    class="img-fluid"
-                  />
-                </div>
-              </div>
+            <h3 style="margin-top: 50px;">Solution 1: Physical Activity</h3>
+            <p style="text-align: center;">
+              Turns out it's the same things that reduce stress which also keep
+              you in shape!
+            </p>
+            <div class="img-c" style="margin-bottom: 50px;">
+              <img src="styles/assets/activity.jpeg" alt="physical activity img" class="img-fluid" width="250px" height="250px"/>
             </div>
-            <div class="col-6">
-              <div class="row border">
-                <div class="alert alert-success p-5">
-                  <h4>Solution 2: Mindfulness and Meditation</h4>
-                  <p>
-                    A lot of stress is self-induced, and is major reason for anxiety
-                    as well. Learn to take control over your mind and your thoughts
-                    and watch your health excel!
-                  </p>
-                </div>
-                <div class="row border p-5">
-                  <img
-                    src="styles/assets/mindfulness.jpg"
-                    alt="mindfulness img"
-                    class="img-fluid"
-                  />
-                </div>
-              </div>
+
+            <h3 style="margin-top: 50px;">Solution 2: Mindfulness and Meditation</h3>
+            <p style="text-align: center;">
+              A lot of stress is self-induced, and is major reason for anxiety
+              as well. Learn to take control over your mind and your thoughts
+              and watch your health excel!
+            </p>
+            <div class="img-c" style="margin-bottom: 50px;">
+              <img src="styles/assets/mindfulness.jpg" alt="mindfulness img" class="img-fluid" width="250px" height="250px"/>
             </div>
-          </div>
+        </div>
+      </div>
+      <div class="section page">
+        <div class="container">
+          <h1> Thank you!</h1>
         </div>
       </div>
     </div>
@@ -216,6 +216,7 @@
 
     <!-- d3 -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullpage.js@4.0.34/dist/fullpage.min.js"></script>
 
     <script src="js/SleepAreaChart.js"></script>
     <script src="js/MyHeartScatter.js"></script>
@@ -225,5 +226,16 @@
     <script src="js/ScatterPlot2.js"></script>
     <script src="js/HeatMap.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      new fullpage('#fullpage', {
+        autoScrolling: true,
+        navigation: true,
+        scrollOverflow: true,
+        credits: {
+          enabled: false
+        }
+      })
+
+    </script>
   </body>
 </html>

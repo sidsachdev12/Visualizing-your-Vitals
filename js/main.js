@@ -13,7 +13,7 @@ d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
   const lineChart = new LineChart({
     parentElement: "lineChart",
     width: 800,
-    height: 400,
+    height: 500,
 
     data: data,
     annotations: annotations,
