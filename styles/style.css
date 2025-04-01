@@ -4,12 +4,25 @@
 }
 #lineChart {
   width: 100%;
+  height: 400px;
 }
 .dot {
   fill: black;
 }
 .annotation {
   font-size: 12px;
+}
+
+#scatterPlot {
+  height: 400px;
+}
+
+#scatter-plot-w {
+  height: 400px;
+}
+
+#heatMap {
+  height: 400px;
 }
 
 img {
