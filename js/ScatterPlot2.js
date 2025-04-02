@@ -30,11 +30,11 @@ class ScatterPlot2 {
       .append("svg")
       .attr(
         "width",
-        vis.config.width + vis.config.margin.left + vis.config.margin.right
+        vis.width + vis.config.margin.left + vis.config.margin.right
       )
       .attr(
         "height",
-        vis.config.height + vis.config.margin.top + vis.config.margin.bottom
+        vis.height + vis.config.margin.top + vis.config.margin.bottom
       )
       .append("g")
       .attr(
