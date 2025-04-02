@@ -13,7 +13,7 @@ This project contains multiple interactive visualizations to help users view, co
 - Heat map visualization of BMI and blood pressure correlations
 
 ## Live Demo
-- **Demo Video**: [video](https://drive.google.com/file/d/14kR-mPiHvAO_0tQZ9xtflzald1hV7p4T/view?usp=drive_link)
+- **Demo Video**: [video](https://drive.google.com/file/d/1DfpDU50AclNpimNvh3lt2gz6acWIn3ht/view?usp=sharing)
 
 ## External Libraries
 - D3.js - Core visualization library
