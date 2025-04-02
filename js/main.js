@@ -67,8 +67,19 @@ d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
   const scatPlot = new ScatterPlot2({
     parentElement: "scatter-plot-w",
     data: data,
-    width: 800,
-    height: 500,
+    width: 800,  // This is the width we need to match
+    height: 300,
+  });
+
+  const heightTimeline = new Timeline({
+    parentElement: "timeline-container",
+    data: data,
+    width: 800,  // Changed from 1000 to 800 to match scatter plot
+    height: 100,
+    margin: { top: 10, right: 30, bottom: 30, left: 50 },
+    brushed: function(range) {
+      scatPlot.filterByHeight(range);
+  }
   });
 });
 

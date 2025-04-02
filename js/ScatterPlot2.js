@@ -2,14 +2,14 @@ class ScatterPlot2 {
   constructor(_config) {
     this.config = {
       parentElement: _config.parentElement,
-      width: _config.width || 900,
-      height: _config.height || 400,
+      width: _config.width || 800,
+      height: _config.height || 300,
       margin: _config.margin || { top: 30, right: 30, bottom: 50, left: 60 },
     };
     this.data = _config.data;
     this.initVis();
   }
-
+  
   initVis() {
     const vis = this;
 
@@ -183,5 +183,28 @@ class ScatterPlot2 {
       .attr("y", 15)
       .style("font-size", "12px")
       .text((d) => d.label);
+
+    vis.svg.selectAll('circle')
+      .attr('class', 'point');
+  }
+
+  filterByHeight(range) {
+    const vis = this;
+
+    // If no range is provided, reset all points
+    if (!range) {
+      vis.svg.selectAll('.point')
+        .attr('opacity', 1);
+      return;
+    }
+
+    // Get the min and max of the range
+    const [minHeight, maxHeight] = range;
+
+    // Update opacity of points based on whether they're in range
+    vis.svg.selectAll('.point')
+      .attr('opacity', d => {
+        return (d.height >= minHeight && d.height <= maxHeight) ? 0.5 : 0;
+      });
   }
 }

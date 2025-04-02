@@ -436,3 +436,27 @@ fp-arrow {
 .img-c {
   text-align: center;
 }
+
+#timeline-container {
+  margin-top: 20px;
+  width: 800px;
+}
+
+.point {
+  transition: opacity 200ms;
+}
+
+ /* Style for the Reset Selection button */
+#reset-brush {
+  background-color: #007e2a;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+#reset-brush:hover {
+  background-color: #a39300;
+}
