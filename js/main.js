@@ -224,3 +224,18 @@ d3.csv("data/sleep_data.csv", (row) => {
 }).then((data) => {
   sleepViz = new sleepAreaChart("sleep-chart", data);
 });
+
+// vis 7 - solutions vis
+d3.csv("./data/cortisol_projected_dataset.csv").then((data) => {
+  data.forEach((d) => {
+    d.month = +d.month;
+    d.cortisol = +d.cortisol;
+  });
+
+  const lineChart2 = new SolutionLineChart({
+    parentElement: "slineChart",
+    width: 800,
+    height: 500,
+    data: data,
+  });
+});
