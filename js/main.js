@@ -72,19 +72,18 @@ d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
   });
 });
 
-// Vis 4 - My Heart Rate
+// Vis 5 - My Heart Rate
 let mode = "daily"; // "daily" or "hourly"
-let defaultDate = new Date(2023, 0, 1);
+const defaultDate = new Date(2023, 0, 1);
+const lastDate = new Date(2023, 0, 30);
 let selectedDay = defaultDate;
 let selectedHour = selectedDay.getHours();
-let heartDailyVis = null; // Store daily visualization instance
-let heartScatterVis = null; // Store scatter visualization instance
+let heartDailyVis = null;
+let heartScatterVis = null;
 
-// Define a parser for the timestamp using d3.timeParse
 const parseTime = d3.timeParse("%Y-%m-%d %H:%M");
 
 d3.csv("./data/heart_rate_data.csv", function (row) {
-  // Parse the timestamp and convert heart_rate to a number.
   row.timestamp = parseTime(row.timestamp);
   row.heart_rate = +row.heart_rate;
   return row;
@@ -92,7 +91,6 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
   // Initial visualization
   MyHeartVisualizations();
 
-  // Set up event listener for the back button
   document.getElementById("backBtn").addEventListener("click", () => {
     if (mode === "hourly") {
       mode = "daily";
@@ -123,12 +121,16 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
 
   function MyHeartVisualizations() {
     if (mode === "daily") {
+      document.getElementById(
+        "additional-info"
+      ).innerText = `Click on one the ellipse to see the distribution during that hour!`;
+
       document.getElementById("backBtn").hidden = true;
       // Callback function to handle ellipse click
       const onHourClick = (hourData) => {
-        selectedDay = hourData.hour; // Store the selected day/hour
-        mode = "hourly"; // Switch to hourly view
-        MyHeartVisualizations(); // Redraw the visualization
+        selectedDay.setHours(hourData.hour.getHours());
+        mode = "hourly";
+        MyHeartVisualizations();
       };
 
       if (selectedDay === defaultDate) {
@@ -137,7 +139,12 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
         document.getElementById("prevHourBtn").hidden = false;
       }
 
-      // Create daily range visualization with the callback and tooltip config
+      if (selectedDay === lastDate) {
+        document.getElementById("nextHourBtn").hidden = true;
+      } else {
+        document.getElementById("nextHourBtn").hidden = false;
+      }
+
       heartDailyVis = new MyHeartDailyRange(
         "heart-scatter",
         data,
@@ -145,9 +152,12 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
         onHourClick
       );
 
-      // Clear reference to scatter visualization
       heartScatterVis = null;
     } else {
+      document.getElementById(
+        "additional-info"
+      ).innerText = `The heart beat faster for higher bpm vlaues on the scatterplot!`;
+
       document.getElementById("backBtn").hidden = false;
 
       if (selectedDay.getHours() === 23) {
@@ -171,26 +181,22 @@ d3.csv("./data/heart_rate_data.csv", function (row) {
           d.timestamp.getHours() === selectedDay.getHours()
       );
 
-      // Create hourly visualization with tooltip config
       heartScatterVis = new MyHeartScatter(
         "heart-scatter",
         hourlyData,
-        selectedDay.getHours(),
-        null // onBack callback not needed since we have a button
+        selectedDay.getHours()
       );
 
-      // Clear reference to daily visualization
       heartDailyVis = null;
     }
   }
 });
 
-// Parse a date string in the format "YYYY-MM-DD" into a JavaScript Date object
 let parseDate = d3.timeParse("%Y-%m-%d");
 
-// Format a JavaScript Date object into a string in the format "YYYY-MM-DD"
 let formatDate = d3.timeFormat("%Y-%m-%d");
 
+// vis 6 - Sleep
 d3.csv("data/sleep_data.csv", (row) => {
   row.date = parseDate(row.date);
   row.total_sleep = +row.total_sleep / 60;
@@ -205,5 +211,5 @@ d3.csv("data/sleep_data.csv", (row) => {
 
   return row;
 }).then((data) => {
-  sleepViz = new sleepAreaChart("sleep-chart", data); // Initialize visualization
+  sleepViz = new sleepAreaChart("sleep-chart", data);
 });

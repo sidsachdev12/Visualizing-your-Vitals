@@ -1,5 +1,5 @@
 class MyHeartDailyRange {
-  constructor(parentElement, data, selectedDay, onHourClickCallback) {
+  constructor(parentElement, data, selectedDay, onHourClickCallback = null) {
     this.parentElement = parentElement;
     this.data = data;
     this.onHourClickCallback = onHourClickCallback;
@@ -7,8 +7,6 @@ class MyHeartDailyRange {
     this.filteredData = [];
     this.day = selectedDay;
 
-    // Create a fixed tooltip element (only once)
-    // Check if it already exists first
     if (!document.getElementById("fixed-heart-tooltip")) {
       const tooltipDiv = document.createElement("div");
       tooltipDiv.id = "fixed-heart-tooltip";
@@ -23,7 +21,6 @@ class MyHeartDailyRange {
       document.body.appendChild(tooltipDiv);
     }
 
-    // Store a reference to the tooltip
     this.tooltipElement = document.getElementById("fixed-heart-tooltip");
 
     this.timeDisplay = document.getElementById("timeDisplay");
@@ -65,28 +62,24 @@ class MyHeartDailyRange {
 
     vis.x = d3
       .scaleTime()
-      .domain([tempStartDate, tempEndDate]) // midnight to midnight
+      .domain([tempStartDate, tempEndDate])
       .range([0, vis.width]);
 
-    // y-scale: min to max heart rate (with some padding)
     vis.y = d3.scaleLinear().domain([50, 100]).range([vis.height, 0]);
 
-    // x-axis: maybe tick every 2 or 3 hours
     vis.xAxis = d3
       .axisBottom(vis.x)
       .ticks(d3.timeHour.every(3))
-      .tickFormat(d3.timeFormat("%-I %p")); // e.g. "12 AM"
+      .tickFormat(d3.timeFormat("%-I %p"));
     vis.svg
       .append("g")
       .attr("class", "x-axis")
       .attr("transform", `translate(0, ${vis.height})`)
       .call(vis.xAxis);
 
-    // y-axis: a few ticks
     vis.yAxis = d3.axisLeft(vis.y).ticks(5);
     vis.svg.append("g").attr("class", "y-axis").call(vis.yAxis);
 
-    // Add y-axis label
     vis.svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -102,33 +95,27 @@ class MyHeartDailyRange {
   wrangleData() {
     const vis = this;
 
-    // Format the selected day as "YYYY-MM-DD"
     vis.selectedDateStr = d3.timeFormat("%Y-%m-%d")(vis.day);
 
-    // Filter the full data array to only include records from the selected day.
     vis.filteredData = vis.data.filter(
       (d) => d3.timeFormat("%Y-%m-%d")(d.timestamp) === vis.selectedDateStr
     );
 
-    // Group the filtered data by hour
     vis.hourlyData = Array.from(
       d3.group(vis.filteredData, (d) => d3.timeHour.floor(d.timestamp)),
       ([hour, values]) => ({
-        hour, // Date object representing the hour (e.g., 2023-03-20 07:00)
+        hour,
         min: d3.min(values, (v) => v.heart_rate),
         max: d3.max(values, (v) => v.heart_rate),
         avg: d3.mean(values, (v) => v.heart_rate),
         count: values.length,
-        values: values, // Keep the raw values for potentially passing to callback
+        values: values,
       })
     ).sort((a, b) => a.hour - b.hour);
 
-    // Find overall min & max heart rate for y-scale
     vis.globalMin = d3.min(vis.hourlyData, (d) => d.min) || 40;
     vis.globalMax = d3.max(vis.hourlyData, (d) => d.max) || 120;
 
-    // x-scale: from earliest hour to the next day's hour
-    // Or just 0–24 if you always show a full day
     vis.startOfDay = d3.timeDay.floor(vis.hourlyData[0]?.hour || vis.day);
     vis.endOfDay = d3.timeDay.offset(vis.startOfDay, 1); // +1 day
 
@@ -138,7 +125,7 @@ class MyHeartDailyRange {
     // Update avgHeartBeat display
     document.getElementById(
       "avgHeartBeat"
-    ).innerText = `Your Average Heart Rate on this day was ${vis.roundedAvg}`;
+    ).innerText = `Your Average Heart Rate on this day was ${vis.roundedAvg} (accurate simulation)`;
     document.getElementById("heartIcon").style.animation = `beat ${
       60 / vis.roundedAvg
     }s infinite ease-in-out`;
@@ -154,10 +141,8 @@ class MyHeartDailyRange {
     vis.x.domain([vis.startOfDay, vis.endOfDay]);
     vis.y.domain([vis.globalMin - 5, vis.globalMax + 5]);
 
-    // For each hour, draw an ellipse covering min..max
-    const ellipseRx = 8; // horizontal radius in pixels
+    const ellipseRx = 8;
 
-    // Store a reference to the ellipses for easier access in event handlers
     const ellipses = vis.svg
       .selectAll("ellipse.hour")
       .data(vis.hourlyData)
@@ -175,17 +160,15 @@ class MyHeartDailyRange {
         const halfSpan = Math.abs(maxY - minY) / 2;
         return halfSpan;
       })
-      .attr("fill", "#ff2d55") // Apple Health–like pink
+      .attr("fill", "#ff2d55")
       .attr("opacity", 0.6)
-      .style("cursor", "pointer"); // Add pointer cursor to indicate clickability
+      .style("cursor", "pointer");
 
-    // Using JavaScript event listeners directly instead of D3 event handling
     ellipses.each(function (d) {
-      const ellipse = this; // DOM element
+      const ellipse = this;
 
       // Mouseover event
       ellipse.addEventListener("mouseover", function (event) {
-        // Highlight ellipse
         d3.select(this)
           .attr("opacity", 1.0)
           .attr("stroke", "#ff0040")
@@ -208,24 +191,18 @@ class MyHeartDailyRange {
         vis.tooltipElement.style.display = "block";
       });
 
-      // Mousemove event
       ellipse.addEventListener("mousemove", function (event) {
         vis.tooltipElement.style.left = event.pageX + 15 + "px";
         vis.tooltipElement.style.top = event.pageY - 15 + "px";
       });
 
-      // Mouseout event
       ellipse.addEventListener("mouseout", function () {
-        // Reset ellipse appearance
         d3.select(this).attr("opacity", 0.6).attr("stroke", "none");
 
-        // Hide tooltip
         vis.tooltipElement.style.display = "none";
       });
 
-      // Click event
       ellipse.addEventListener("click", function () {
-        // Hide tooltip
         vis.tooltipElement.style.display = "none";
         if (vis.onHourClickCallback) {
           vis.onHourClickCallback(d);

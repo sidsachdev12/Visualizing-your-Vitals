@@ -3,11 +3,9 @@ class sleepAreaChart {
     this.parentElement = parentElement;
     this.data = data;
 
-    // Define the date range
     this.startDate = parseDate("2023-1-02");
     this.endDate = parseDate("2023-1-08");
 
-    // Filter the data based on the date range
     this.filteredData = [];
 
     this.formatDate = d3.timeFormat("%b %d, %y");
@@ -32,7 +30,6 @@ class sleepAreaChart {
     this.initViz();
   }
 
-  // 1. Initialize the visualization
   initViz() {
     let viz = this;
 
@@ -46,7 +43,7 @@ class sleepAreaChart {
         .height -
       viz.margin.top -
       viz.margin.bottom;
-    // Create SVG container
+
     viz.svg = d3
       .select("#" + viz.parentElement)
       .append("svg")
@@ -103,7 +100,6 @@ class sleepAreaChart {
     viz.wrangleData();
   }
 
-  // 2. Process the data
   wrangleData() {
     const viz = this;
 
@@ -119,33 +115,29 @@ class sleepAreaChart {
     // Add the key property to each data point
     viz.stackedData.forEach((layer) => {
       layer.forEach((d) => {
-        d.key = layer.key; // Add the key property
+        d.key = layer.key;
       });
     });
 
     viz.updateViz();
   }
 
-  // Helper function to format sleep duration
   formatSleepDuration(hours) {
     const wholeHours = Math.floor(hours);
     const minutes = Math.round((hours - wholeHours) * 60);
     return `${wholeHours}h ${minutes}m`;
   }
 
-  // 3. Draw and update the visualization
   updateViz() {
     let viz = this;
-    // Update scales
-    viz.x.domain(viz.filteredData.map((d) => d.date)); // Days of the week
-    viz.y.domain([0, 12]); // Total sleep duration
+
+    viz.x.domain(viz.filteredData.map((d) => d.date));
+    viz.y.domain([0, 12]);
 
     // Update the x-axis
     viz.svg
-      .select(".x-axis") // Select the existing x-axis group
-      .call(d3.axisBottom(viz.x).tickFormat(viz.formatDate)); // Re-render the x-axis
-
-    console.log(viz.startDate);
+      .select(".x-axis")
+      .call(d3.axisBottom(viz.x).tickFormat(viz.formatDate));
 
     if (viz.startDate <= parseDate("2023-1-02")) {
       viz.leftArrow.style("visibility", "hidden");
@@ -171,7 +163,7 @@ class sleepAreaChart {
       .attr("y", (d) => viz.y(d[1]))
       .attr("height", (d) => viz.y(d[0]) - viz.y(d[1]))
       .attr("width", viz.x.bandwidth())
-      .attr("fill", (d) => viz.color(d.key)); // Use the key property for color
+      .attr("fill", (d) => viz.color(d.key));
 
     // Add new bars with tooltip interactions
     viz.bars
@@ -182,10 +174,9 @@ class sleepAreaChart {
       .attr("y", (d) => viz.y(d[1]))
       .attr("height", (d) => viz.y(d[0]) - viz.y(d[1]))
       .attr("width", viz.x.bandwidth())
-      .attr("fill", (d) => viz.color(d.key)) // Use the key property for color
+      .attr("fill", (d) => viz.color(d.key))
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
-        // Highlight the bar
         d3.select(this)
           .transition()
           .duration(200)
@@ -193,26 +184,19 @@ class sleepAreaChart {
           .attr("stroke", "#fff")
           .attr("stroke-width", 2);
 
-        // Calculate duration for this specific sleep phase
         const duration = d[1] - d[0];
 
-        // Format date
         const formattedDate = viz.formatDate(d.data.date);
 
-        // Get day of the week
         const dayOfWeek = d3.timeFormat("%A")(d.data.date);
 
-        // Capitalize first letter of sleep phase
         const sleepPhase = d.key.charAt(0).toUpperCase() + d.key.slice(1);
 
-        // Get total sleep for that day
         const totalSleep =
           d.data.deep + d.data.core + d.data.rem + d.data.awake;
 
-        // Calculate percentage of this phase
         const percentage = Math.round((duration / totalSleep) * 100);
 
-        // Tooltip content
         let tooltipContent = `
           <div style="font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px;">
             ${dayOfWeek}, ${formattedDate}
@@ -244,20 +228,17 @@ class sleepAreaChart {
           .style("opacity", 1);
       })
       .on("mousemove", function (event) {
-        // Move tooltip with cursor
         viz.tooltip
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY - 15 + "px");
       })
       .on("mouseout", function () {
-        // Reset bar appearance
         d3.select(this)
           .transition()
           .duration(200)
           .attr("opacity", 1)
           .attr("stroke", "none");
 
-        // Hide tooltip
         viz.tooltip
           .transition()
           .duration(200)
@@ -275,12 +256,11 @@ class sleepAreaChart {
       .enter()
       .append("div")
       .attr("class", "legend")
-      .style("color", (d) => viz.color(d)) // Set text color
+      .style("color", (d) => viz.color(d))
       .html(
         (d) => `<span style="background-color:${viz.color(d)}"></span> ${d}`
-      ) // Add color box
+      )
       .on("click", function (event, selectedGroup) {
-        // Find the index of the selected group
         const selectedIndex = viz.color.domain().indexOf(selectedGroup);
 
         // Update the y-position and height of each bar
@@ -291,29 +271,23 @@ class sleepAreaChart {
             let height = viz.y(d[0]) - viz.y(d[1]);
             let groupIndex = viz.color.domain().indexOf(d.key);
             if (groupIndex < selectedIndex) {
-              // Move groups below the selected group below the x-axis
-              return viz.y(d[1] - 60); // Adjust offset as needed
+              return viz.y(d[1] - 60);
             } else if (groupIndex === selectedIndex) {
-              // Place the selected group on the x-axis
-              return viz.y(0) - height; // Adjust y-position to snap to x-axis
+              return viz.y(0) - height;
             } else {
-              // Keep groups above the selected group in their original positions
               return viz.y(d[1]);
             }
           })
           .attr("height", (d) => {
             let groupIndex = viz.color.domain().indexOf(d.key);
             if (groupIndex < selectedIndex) {
-              // Adjust height for groups below the selected group
               return viz.y(d[0] - 60) - viz.y(d[1] - 60);
             } else {
-              // Keep the height of the selected group the same
               return viz.y(d[0]) - viz.y(d[1]);
             }
           });
       });
 
-    // Initial highlight (optional)
     d3.select(".legend").dispatch("click");
   }
 

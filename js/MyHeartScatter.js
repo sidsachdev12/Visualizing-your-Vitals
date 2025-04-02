@@ -1,12 +1,17 @@
 class MyHeartScatter {
-  constructor(parentElement, data, selectedHour, onBack, tooltipConfig = {}) {
+  constructor(
+    parentElement,
+    data,
+    selectedHour,
+    onBack = null,
+    tooltipConfig = {}
+  ) {
     this.parentElement = parentElement;
     this.data = data;
     this.selectedHour = selectedHour;
     this.onBack = onBack;
     this.timeDisplay = document.getElementById("timeDisplay");
 
-    // Default tooltip configuration with option to override
     this.tooltipConfig = {
       backgroundColor:
         tooltipConfig.backgroundColor || "rgba(255, 255, 255, 0.9)",
@@ -31,7 +36,6 @@ class MyHeartScatter {
 
     this.filteredData = [];
 
-    // Initialize tooltip div (create only once)
     this.tooltip = d3.select("body").select(".heart-rate-tooltip");
     if (this.tooltip.empty()) {
       this.tooltip = d3
@@ -51,7 +55,7 @@ class MyHeartScatter {
         .style("font-size", this.tooltipConfig.fontSize)
         .style("pointer-events", "none")
         .style("box-shadow", "0 2px 5px rgba(0, 0, 0, 0.1)")
-        .style("z-index", "1000"); // Ensure tooltip is above other elements
+        .style("z-index", "1000");
     }
 
     this.initVis();
@@ -133,7 +137,6 @@ class MyHeartScatter {
       (d) => d.timestamp.getHours() === vis.selectedHour
     );
 
-    // Y scale: based on heart_rate values with padding.
     vis.yMin = d3.min(vis.filteredData, (d) => d.heart_rate) || 50;
     vis.yMax = d3.max(vis.filteredData, (d) => d.heart_rate) || 100;
     vis.newAvg = d3.mean(vis.filteredData, (d) => d.heart_rate) || 60;
@@ -142,7 +145,7 @@ class MyHeartScatter {
     // Update avgHeartBeat display
     document.getElementById(
       "avgHeartBeat"
-    ).innerText = `Your Average Heart Rate during this hour was ${vis.roundedAvg}`;
+    ).innerText = `Your Average Heart Rate during this hour was ${vis.roundedAvg} (accurate simulation)`;
     document.getElementById("heartIcon").style.animation = `beat ${
       60 / vis.roundedAvg
     }s infinite ease-in-out`;
@@ -153,17 +156,14 @@ class MyHeartScatter {
   updateVis() {
     const vis = this;
 
-    // Update y scale domain based on data range
     vis.y.domain([vis.yMin - 5, vis.yMax + 5]);
 
-    // Update y-axis
     vis.svg.select(".y-axis").transition().duration(500).call(vis.yAxis);
 
     // Draw average line
     vis.avgLineGroup.selectAll(".avg-line").remove();
     vis.avgLineGroup.selectAll(".avg-label").remove();
 
-    // Add the average line
     vis.avgLineGroup
       .append("line")
       .attr("class", "avg-line")
@@ -175,7 +175,6 @@ class MyHeartScatter {
       .attr("stroke-width", 1.5)
       .attr("stroke-dasharray", "5,5");
 
-    // Add average label
     vis.avgLineGroup
       .append("text")
       .attr("class", "avg-label")
@@ -196,48 +195,40 @@ class MyHeartScatter {
             .attr("x", (d) => vis.x(d.timestamp.getMinutes()))
             .attr("y", (d) => vis.y(d.heart_rate))
             .attr("text-anchor", "middle")
-            .attr("dy", ".35em") // Vertically center the text
+            .attr("dy", ".35em")
             .text("❤")
             .attr("font-size", "25px")
             .attr("fill", (d) => {
-              // Color based on relation to average
-              if (d.heart_rate > vis.roundedAvg + 10) return "#ff3b30"; // Much higher - bright red
-              if (d.heart_rate > vis.roundedAvg) return "#ff9500"; // Higher - orange
-              if (d.heart_rate < vis.roundedAvg - 10) return "#007aff"; // Much lower - blue
-              if (d.heart_rate < vis.roundedAvg) return "#5ac8fa"; // Lower - light blue
-              return "#ff2d55"; // Around average
+              if (d.heart_rate > vis.roundedAvg + 10) return "#ff3b30";
+              if (d.heart_rate > vis.roundedAvg) return "#ff9500";
+              if (d.heart_rate < vis.roundedAvg - 10) return "#007aff";
+              if (d.heart_rate < vis.roundedAvg) return "#5ac8fa";
+              return "#ff2d55";
             })
-            // Set animation duration based on heart_rate; for example:
+
             .style("animation", (d) => {
-              // Apply logarithmic transformation for more dramatic visual effect
-              // This makes fast heart rates appear much faster and slow rates appear slower
-              const baseRate = 60 / d.heart_rate; // Standard calculation
-              const logFactor = Math.log(d.heart_rate / 72) + 1; // Log transform centered around normal heart rate
+              const baseRate = 60 / d.heart_rate;
+              const logFactor = Math.log(d.heart_rate / 72) + 1;
               const adjustedRate = baseRate / logFactor;
 
-              // Clamp to reasonable values (between 0.2s and 2s)
               const finalRate = Math.max(0.2, Math.min(2, adjustedRate));
               return `beat ${finalRate}s infinite ease-in-out`;
             })
             .style("cursor", "pointer")
             .on("mouseover", function (event, d) {
-              // Highlight the hovered heart
               d3.select(this)
                 .transition()
                 .duration(200)
                 .attr("font-size", "32px");
 
-              // Format tooltip content based on configuration
               let tooltipContent = "";
 
-              // Use custom format if provided
               if (vis.tooltipConfig.customFormat) {
                 tooltipContent = vis.tooltipConfig.customFormat(
                   d,
                   vis.roundedAvg
                 );
               } else {
-                // Otherwise use the default format with configurable sections
                 if (vis.tooltipConfig.showTime) {
                   const timeFormat = d3.timeFormat("%H:%M:%S");
                   tooltipContent += `<div><strong>${timeFormat(
@@ -261,7 +252,6 @@ class MyHeartScatter {
                 }
               }
 
-              // Show tooltip
               vis.tooltip
                 .html(tooltipContent)
                 .style("visibility", "visible")
@@ -269,19 +259,16 @@ class MyHeartScatter {
                 .style("top", event.pageY - 10 + "px");
             })
             .on("mousemove", function (event) {
-              // Move tooltip with mouse
               vis.tooltip
                 .style("left", event.pageX + 10 + "px")
                 .style("top", event.pageY - 10 + "px");
             })
             .on("mouseout", function () {
-              // Reset heart appearance
               d3.select(this)
                 .transition()
                 .duration(200)
                 .attr("font-size", "25px");
 
-              // Hide tooltip
               vis.tooltip.style("visibility", "hidden");
             }),
         (update) =>
@@ -292,50 +279,21 @@ class MyHeartScatter {
             .attr("y", (d) => vis.y(d.heart_rate))
             .attr("fill", (d) => {
               // Color based on relation to average
-              if (d.heart_rate > vis.roundedAvg + 10) return "#ff3b30"; // Much higher - bright red
-              if (d.heart_rate > vis.roundedAvg) return "#ff9500"; // Higher - orange
-              if (d.heart_rate < vis.roundedAvg - 10) return "#007aff"; // Much lower - blue
-              if (d.heart_rate < vis.roundedAvg) return "#5ac8fa"; // Lower - light blue
-              return "#ff2d55"; // Around average
+              if (d.heart_rate > vis.roundedAvg + 10) return "#ff3b30";
+              if (d.heart_rate > vis.roundedAvg) return "#ff9500";
+              if (d.heart_rate < vis.roundedAvg - 10) return "#007aff";
+              if (d.heart_rate < vis.roundedAvg) return "#5ac8fa";
+              return "#ff2d55";
             })
             .style("animation", (d) => {
-              // Apply logarithmic transformation for more dramatic visual effect
-              // This makes fast heart rates appear much faster and slow rates appear slower
-              const baseRate = 60 / d.heart_rate; // Standard calculation
-              const logFactor = Math.log(d.heart_rate / 72) + 1; // Log transform centered around normal heart rate
+              const baseRate = 60 / d.heart_rate;
+              const logFactor = Math.log(d.heart_rate / 72) + 1;
               const adjustedRate = baseRate / logFactor;
 
-              // Clamp to reasonable values (between 0.2s and 2s)
               const finalRate = Math.max(0.2, Math.min(2, adjustedRate));
               return `beat ${finalRate}s infinite ease-in-out`;
             }),
         (exit) => exit.remove()
       );
-  }
-
-  // Method to update tooltip configuration
-  updateTooltipConfig(newConfig) {
-    const vis = this;
-
-    // Update config
-    Object.keys(newConfig).forEach((key) => {
-      if (vis.tooltipConfig.hasOwnProperty(key)) {
-        vis.tooltipConfig[key] = newConfig[key];
-      }
-    });
-
-    // Update tooltip styling
-    vis.tooltip
-      .style("background-color", vis.tooltipConfig.backgroundColor)
-      .style("color", vis.tooltipConfig.textColor)
-      .style(
-        "border",
-        `${vis.tooltipConfig.borderWidth}px solid ${vis.tooltipConfig.borderColor}`
-      )
-      .style("border-radius", `${vis.tooltipConfig.borderRadius}px`)
-      .style("padding", `${vis.tooltipConfig.padding}px`)
-      .style("font-size", vis.tooltipConfig.fontSize);
-
-    // No need to redraw the visualization, just the tooltip styling is updated
   }
 }
