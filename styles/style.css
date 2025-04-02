@@ -6,6 +6,27 @@
   width: 100%;
   height: 400px;
 }
+
+#slineChart {
+  width: 100%;
+  height: 600px;
+}
+
+.dash {
+  fill: none;
+  stroke-dasharray: 4 4;
+}
+
+.fp-next  {
+  right: 50px; !important;
+  border-color: transparent transparent transparent darkgray !important;
+}
+
+.fp-prev {
+  left: 20px; !important;
+  border-color: transparent darkgray transparent transparent !important;
+}
+
 .dot {
   fill: black;
 }
