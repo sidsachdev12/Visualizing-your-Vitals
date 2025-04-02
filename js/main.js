@@ -11,9 +11,9 @@ d3.csv("./data/cortisol_trend_dataset.csv").then((data) => {
   ];
 
   const lineChart = new LineChart({
-    parentElement: "#lineChart",
+    parentElement: "lineChart",
     width: 800,
-    height: 400,
+    height: 500,
 
     data: data,
     annotations: annotations,
@@ -30,7 +30,7 @@ d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
   const annotations = [];
 
   const scatterPlot = new ScatterPlot({
-    parentElement: "#scatterPlot",
+    parentElement: "scatterPlot",
     width: 800,
     height: 400,
     data: data,
@@ -50,10 +50,8 @@ d3.csv("./data/ai_healthcare_dataset.csv").then((data) => {
 // vis 3 – Using resting heart rate instead of entropy_heart
 d3.csv("./data/sleep_lifestyle_dataset.csv").then((data) => {
   const heatMap = new HeatMap({
-    parentElement: "#heatMap",
+    parentElement: "heatMap",
     data: data,
-    width: 800,
-    height: 500,
   });
 });
 
@@ -67,14 +65,12 @@ d3.csv("./data/applewatch_fitbit_dataset.csv").then((data) => {
     };
   });
   const scatPlot = new ScatterPlot2({
-    parentElement: "#scatter-plot-w",
+    parentElement: "scatter-plot-w",
     data: data,
     width: 800,
     height: 500,
   });
 });
-
-/// Your other code remains the same...
 
 // Vis 4 - My Heart Rate
 let mode = "daily"; // "daily" or "hourly"
